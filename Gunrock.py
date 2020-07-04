@@ -52,11 +52,13 @@ async def boomer(ctx, member : discord.Member):
 @client.command()
 async def add(ctx, member : discord.Member, num):
     member_id = member.id
+    username = member.display_name
+    print(username)
     num_int = int(num)
 
     # Save to pickle
     current_score = save_score(member_id, num_int)
-    await ctx.send(f"Gotcha, added {num} points to {member}'s swear jar! Current score: " + str(current_score))
+    await ctx.send(f"Gotcha, added {num} points to " + username + "'s swear jar! Current score: " + str(current_score))
 
     #else:
     #    await ctx.send("Looks like you set the number value to be something other than 1 or 5. Why, did someone say something egregiously bad?")
@@ -64,11 +66,12 @@ async def add(ctx, member : discord.Member, num):
 @client.command()
 async def remove(ctx, member : discord.Member, num):
     member_id = member.id
+    username = member.display_name
     num_int = int(num)
 
     # Save to pickle
     current_score = remove_score(member_id, num_int)
-    await ctx.send(f"Gotcha, removed {num} points to {member}'s swear jar! Current score: " + str(current_score))
+    await ctx.send(f"Gotcha, removed {num} points from " + username + "'s swear jar! Current score: " + str(current_score))
 
     #else:
     #    await ctx.send("Looks like you set the number value to be something other than 1 or 5.")
@@ -93,9 +96,10 @@ async def resetscore(ctx):
 @client.command()
 async def addquote(ctx, member : discord.Member, *, message):
     member_id = member.id
+    username = member.display_name
     save_quote(member_id, message)
 
-    await ctx.send(f"Okie, added to {member}'s quotebook: {message}")
+    await ctx.send("Okie, added to " + username + f"'s quotebook: {message}")
 
 @client.command()
 async def quote(ctx, member: discord.Member):
@@ -127,7 +131,6 @@ def save_score(member_id, num):
 
     pickle_in = open("test.pickle", "rb")
     dict = pickle.load(pickle_in)
-
 
     member_string = str(member_id)
     if member_string not in dict:
@@ -200,15 +203,20 @@ def get_leaderboard():
 
     # Loop thorugh the list
     for i in sorted_dict:
-        print(place_count)
+        #print(place_count)
 
         # Convert the user ID into a mention
-        username_in_str = '<@' + str(i) + '>'
+        #username_in_str = '<@' + str(i) + '>'
+        id_in_int = int(i)
+        user = client.get_user(id_in_int)
+        username = user.name
 
         place_count += 1;
         if (place_count <= 5):
-            addon_message += str(place_count) + ": " + username_in_str + ' ' + str(sorted_dict[i]) + "\n"
-            print(addon_message)
+            addon_message += str(place_count) + ": " + username + ' ' + str(sorted_dict[i]) + "\n"
+            #print(addon_message)
+
+
     addon_message = "```" + addon_message + "```"
     return(addon_message)
 
@@ -231,13 +239,13 @@ def save_quote(member_id, quote):
         dict[member_string] = []
         dict[member_string].append(quote)
     elif member_string in dict:
-        print(quote)
+        #print(quote)
         dict[member_string].append(quote)
 
     # Save to pickle
     pickle_out = open("test2.pickle", "wb")
     pickle.dump(dict, pickle_out)
-    print(dict)
+    #print(dict)
     pickle_out.close()
 
 def list_quotes(member_id):
@@ -322,9 +330,9 @@ def remove_quote(member_id, num):
     # Save dic to pickle
     pickle_out = open("test2.pickle", "wb")
     pickle.dump(dict, pickle_out)
-    print(dict)
+    #print(dict)
     pickle_out.close()
 
     return("Removed quote!")
 
-client.run("NzI4ODgyNTIwOTk2NzA4NDA0.XwA2xQ.LJkd2QZ9oHUluZPCDi2FMacEycY")
+client.run("")
