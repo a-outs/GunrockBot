@@ -5,16 +5,18 @@ import operator
 import random
 import pickle
 
-client = commands.Bot(command_prefix = '.')
+client = commands.Bot(command_prefix = '-')
 
 # Events
 @client.event
 async def on_ready():
     print('ready')
 
+'''
 @client.event
 async def on_command_error(ctx, error):
     await ctx.send("Command error: do .manual to see the availible commands in their correct format")
+'''
 
 
 @client.event
@@ -28,12 +30,13 @@ async def on_member_remove(member):
 @client.command()
 async def manual(ctx):
     instructions = " ```Here are the commands: \n\n"
-    instructions += "/add @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
-    instructions += "/leaderboard: Shows the top 5 in the swear jar. \n\n"
-    instructions += "/addquote @user (type quote after @user): Add a quote to the mentioned user's quotebook. \n\n"
-    instructions += "/quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
-    instructions += "/listquotes @user: Lists all of the mentioned user's quotes. \n\n"
-    instructions += "/removeqote @user (insert quote number here): Removes the designated quote from the mentioned user's quote book. ```"
+    instructions += ".add @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
+    instructions += ".remove @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
+    instructions += ".leaderboard: Shows the top 5 in the swear jar. \n\n"
+    instructions += ".addquote @user (type quote after @user): Add a quote to the mentioned user's quotebook. \n\n"
+    instructions += ".quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
+    instructions += ".listquotes @user: Lists all of the mentioned user's quotes. \n\n"
+    instructions += ".removequote @user (insert quote number here): Removes the designated quote from the mentioned user's quote book. ```"
 
     await ctx.send(instructions)
 
@@ -50,12 +53,25 @@ async def boomer(ctx, member : discord.Member):
 async def add(ctx, member : discord.Member, num):
     member_id = member.id
     num_int = int(num)
-    if (num_int == 1 or num_int == 5):
-        # Save to pickle
-        save_score(member_id, num_int)
-        await ctx.send(f"Gotcha, added {num} points to {member}'s swear jar!")
-    else:
-        await ctx.send("Looks like you set the number value to be something other than 1 or 5. Why, did someone say something egregiously bad?")
+
+    # Save to pickle
+    current_score = save_score(member_id, num_int)
+    await ctx.send(f"Gotcha, added {num} points to {member}'s swear jar! Current score: " + str(current_score))
+
+    #else:
+    #    await ctx.send("Looks like you set the number value to be something other than 1 or 5. Why, did someone say something egregiously bad?")
+
+@client.command()
+async def remove(ctx, member : discord.Member, num):
+    member_id = member.id
+    num_int = int(num)
+
+    # Save to pickle
+    current_score = remove_score(member_id, num_int)
+    await ctx.send(f"Gotcha, removed {num} points to {member}'s swear jar! Current score: " + str(current_score))
+
+    #else:
+    #    await ctx.send("Looks like you set the number value to be something other than 1 or 5.")
 
 @client.command()
 async def leaderboard(ctx):
@@ -119,10 +135,47 @@ def save_score(member_id, num):
     elif member_string in dict:
         dict[member_string] += num
 
+    current_score = dict[member_string]
+
     # After editing dictionary, save it back into the pickle
     pickle_out = open("test.pickle", "wb")
     pickle.dump(dict, pickle_out)
     pickle_out.close()
+
+    return(current_score)
+
+def remove_score(member_id, num):
+    # On command
+    try:
+        pickle_in = open("test.pickle", "rb")
+
+    except FileNotFoundError:
+        # If the code is being run for the first time and therefore a dictionary does not exist
+        pickle_out = open("test.pickle", "wb")
+        empty_dict = {}
+        pickle.dump(empty_dict, pickle_out)
+        pickle_out.close()
+
+    pickle_in = open("test.pickle", "rb")
+    dict = pickle.load(pickle_in)
+
+
+    member_string = str(member_id)
+    if member_string not in dict:
+        dict[member_string] = num
+    elif member_string in dict:
+        dict[member_string] -= num
+
+        if dict[member_string] < 0:
+            dict[member_string] = 0
+    current_score = dict[member_string]
+
+    # After editing dictionary, save it back into the pickle
+    pickle_out = open("test.pickle", "wb")
+    pickle.dump(dict, pickle_out)
+    pickle_out.close()
+
+    return(current_score)
 
 def get_leaderboard():
     try:
@@ -156,7 +209,7 @@ def get_leaderboard():
         if (place_count <= 5):
             addon_message += str(place_count) + ": " + username_in_str + ' ' + str(sorted_dict[i]) + "\n"
             print(addon_message)
-
+    addon_message = "```" + addon_message + "```"
     return(addon_message)
 
 def save_quote(member_id, quote):
@@ -274,4 +327,4 @@ def remove_quote(member_id, num):
 
     return("Removed quote!")
 
-client.run('')
+client.run("NzI4ODgyNTIwOTk2NzA4NDA0.XwA2xQ.LJkd2QZ9oHUluZPCDi2FMacEycY")
