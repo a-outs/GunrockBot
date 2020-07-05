@@ -51,14 +51,16 @@ async def boomer(ctx, member : discord.Member):
 
 @client.command()
 async def dab(ctx, member : discord.Member):
-    member_id = member.id
-    member_id = str(member_id)
-    member_as_mention = "<@" + member_id + ">"
+    member_as_mention = "<@" + str(member.id) + ">"
     await ctx.send(member_as_mention + " get dabbed on! <O/")
 
 @client.command()
 async def telltime(ctx):
-    await ctx.send(datetime.datetime.now().strftime("%Y %m %d %H:%M"))
+    await ctx.send(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+
+@client.command()
+async def mergetest(ctx):
+    await ctx.send("You shouldn't be using this command...")
 
 @client.command()
 async def add(ctx, member : discord.Member, num):
@@ -337,3 +339,5 @@ def remove_quote(member_id, num):
     pickle_out.close()
 
     return("Removed quote!")
+
+client.run("")
