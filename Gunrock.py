@@ -50,11 +50,11 @@ async def boomer(ctx, member : discord.Member):
     await ctx.send(member_as_mention + " okay boomer")
 
 @client.command()
-async def dab(ctx, member : discord.Member, customMessage):
+async def dab(ctx, member : discord.Member):
     member_id = member.id
     member_id = str(member_id)
     member_as_mention = "<@" + member_id + ">"
-    await ctx.send(member_as_mention + " get dabbed on! <O/ and heres a message ya filthy animal: " + customMessage)
+    await ctx.send(member_as_mention + " get dabbed on! <O/")
 
 @client.command()
 async def telltime(ctx):
@@ -337,5 +337,3 @@ def remove_quote(member_id, num):
     pickle_out.close()
 
     return("Removed quote!")
-
-client.run("NzI4OTAzNDAyOTM5MjIwMDM5.XwBQ2Q.Y_yDGwA70ejsZLTSqWFI1JUv3JQ")
