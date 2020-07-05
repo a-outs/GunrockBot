@@ -4,8 +4,9 @@ from discord.ext.commands import Bot
 import operator
 import random
 import pickle
+import datetime
 
-client = commands.Bot(command_prefix = '-')
+client = commands.Bot(command_prefix = '%')
 
 # Events
 @client.event
@@ -48,6 +49,16 @@ async def boomer(ctx, member : discord.Member):
     member_as_mention = "<@" + member_id + ">"
     await ctx.send(member_as_mention + " okay boomer")
 
+@client.command()
+async def dab(ctx, member : discord.Member, customMessage):
+    member_id = member.id
+    member_id = str(member_id)
+    member_as_mention = "<@" + member_id + ">"
+    await ctx.send(member_as_mention + " get dabbed on! <O/ and heres a message ya filthy animal: " + customMessage)
+
+@client.command()
+async def telltime(ctx):
+    await ctx.send(datetime.datetime.now().strftime("%Y %m %d %H:%M"))
 
 @client.command()
 async def add(ctx, member : discord.Member, num):
@@ -327,4 +338,4 @@ def remove_quote(member_id, num):
 
     return("Removed quote!")
 
-client.run("NzI4ODgyNTIwOTk2NzA4NDA0.XwA2xQ.LJkd2QZ9oHUluZPCDi2FMacEycY")
+client.run("NzI4OTAzNDAyOTM5MjIwMDM5.XwBQ2Q.Y_yDGwA70ejsZLTSqWFI1JUv3JQ")
