@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
+from discord.ext.commands import has_permissions
 import operator
 import random
 import pickle
@@ -8,19 +9,45 @@ import datetime
 import csv
 import sys
 
-client = commands.Bot(command_prefix = '%')
+prefixes = {}
+
+try:
+    pickle_prefix_in = open("prefixes.pickle", "rb")
+
+except FileNotFoundError:
+    # If the code is being run for the first time and therefore a dictionary does not exist
+    pickle_prefix_out = open("prefixes.pickle", "wb")
+    pickle.dump(prefixes, pickle_prefix_out)
+    pickle_prefix_out.close()
+
+prefixes = pickle.load(pickle_prefix_in)
+
+default_prefix = '%'
+
+def prefix_saving():
+    pickle_out = open("prefixes.pickle", "wb")
+    pickle.dump(prefixes, pickle_out)
+    pickle_out.close()
+
+async def determine_prefix(bot, message):
+    guild = message.guild
+
+    if guild:
+        return prefixes.get(guild.id, default_prefix)
+    else:
+        return default_prefix
+
+client = commands.Bot(command_prefix = determine_prefix)
 
 # Events
 @client.event
 async def on_ready():
     print('ready')
 
-'''
+
 @client.event
 async def on_command_error(ctx, error):
-    await ctx.send("Command error: do .manual to see the availible commands in their correct format")
-'''
-
+    await ctx.send(error)
 
 @client.event
 async def on_member_join(member):
@@ -30,8 +57,9 @@ async def on_member_join(member):
 async def on_member_remove(member):
     print(f'{member} yeeted away from the server.')
 
+client.remove_command('help')
 @client.command()
-async def manual(ctx):
+async def help(ctx):
     instructions = " ```Here are the commands: \n\n"
     instructions += ".add @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
     instructions += ".remove @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
@@ -44,6 +72,12 @@ async def manual(ctx):
 
     await ctx.send(instructions)
 
+@client.command()
+#@has_permissions(manage_guild=True)
+async def setprefix(ctx, arg):
+    prefixes[ctx.guild.id] = arg
+    prefix_saving()
+    await ctx.send("Prefix changed to " + arg)
 
 @client.command()
 async def boomer(ctx, member : discord.Member):
@@ -61,7 +95,7 @@ async def dab(ctx, member : discord.Member):
 
 @client.command()
 async def telltime(ctx):
-    await ctx.send(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+    await ctx.send(datetime.datetime.now().strftime("%b %d, %Y @ %I:%M %p"))
 
 @client.command()
 async def add(ctx, member : discord.Member, num):
@@ -221,8 +255,6 @@ def get_leaderboard():
 
     # Loop thorugh the list
     for i in sorted_dict:
-        print(place_count)
-
         # Convert the user ID into a username
         id_in_int = int(i)
         user = client.get_user(id_in_int)
@@ -249,20 +281,19 @@ def save_quote(member_id, quote):
     pickle_in = open("test2.pickle", "rb")
     dict = pickle.load(pickle_in)
 
-    # quote = datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + " - \"" + quote + "\"" # <-- typical ISO format
     quote = datetime.datetime.now().strftime("%b %d, %Y @ %I:%M %p") + " - \"" + quote + "\"" # <-- typical freedom format
     member_string = str(member_id)
     if member_string not in dict:
         dict[member_string] = []
         dict[member_string].append(quote)
     elif member_string in dict:
-        print(quote)
+        #print(quote)
         dict[member_string].append(quote)
 
     # Save to pickle
     pickle_out = open("test2.pickle", "wb")
     pickle.dump(dict, pickle_out)
-    print(dict)
+    #print(dict)
     pickle_out.close()
 
 def list_quotes(member_id, member_display_name):
@@ -347,7 +378,7 @@ def remove_quote(member_id, num):
     # Save dic to pickle
     pickle_out = open("test2.pickle", "wb")
     pickle.dump(dict, pickle_out)
-    print(dict)
+    #print(dict)
     pickle_out.close()
 
     return("Removed quote!")
