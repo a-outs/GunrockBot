@@ -202,8 +202,10 @@ def get_leaderboard():
     for i in sorted_dict:
         print(place_count)
 
-        # Convert the user ID into a mention
-        username_in_str = '<@' + str(i) + '>'
+        # Convert the user ID into a member object
+        #user = client.fetch_user(i)
+        print(user)
+
 
         place_count += 1;
         if (place_count <= 5):
@@ -327,4 +329,8 @@ def remove_quote(member_id, num):
 
     return("Removed quote!")
 
+<<<<<<< Updated upstream
 client.run("")
+=======
+client.run("NzI4ODgyNTIwOTk2NzA4NDA0.XwFqHA.PO81aQVjhI53ommHhda38aOWzwo")
+>>>>>>> Stashed changes
