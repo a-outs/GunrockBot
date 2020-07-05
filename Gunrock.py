@@ -52,11 +52,13 @@ async def boomer(ctx, member : discord.Member):
 @client.command()
 async def add(ctx, member : discord.Member, num):
     member_id = member.id
+    username = member.display_name
     num_int = int(num)
+
 
     # Save to pickle
     current_score = save_score(member_id, num_int)
-    await ctx.send(f"Gotcha, added {num} points to {member}'s swear jar! Current score: " + str(current_score))
+    await ctx.send(f"Gotcha, added {num} points to " + username + "'s swear jar! Current score: " + str(current_score))
 
     #else:
     #    await ctx.send("Looks like you set the number value to be something other than 1 or 5. Why, did someone say something egregiously bad?")
@@ -203,13 +205,13 @@ def get_leaderboard():
         print(place_count)
 
         # Convert the user ID into a member object
-        #user = client.fetch_user(i)
-        print(user)
+        username = client.fetch_user(i).name
+        print(username)
 
 
         place_count += 1;
         if (place_count <= 5):
-            addon_message += str(place_count) + ": " + username_in_str + ' ' + str(sorted_dict[i]) + "\n"
+            addon_message += str(place_count) + ": " + username + ' ' + str(sorted_dict[i]) + "\n"
             print(addon_message)
     addon_message = "```" + addon_message + "```"
     return(addon_message)
@@ -329,8 +331,5 @@ def remove_quote(member_id, num):
 
     return("Removed quote!")
 
-<<<<<<< Updated upstream
-client.run("")
-=======
-client.run("NzI4ODgyNTIwOTk2NzA4NDA0.XwFqHA.PO81aQVjhI53ommHhda38aOWzwo")
->>>>>>> Stashed changes
+
+client.run("NzI4ODgyNTIwOTk2NzA4NDA0.XwFsEw.Fc-Ry0HGapp_SF8BI4Cehw-LgFA")
