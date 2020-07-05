@@ -327,4 +327,4 @@ def remove_quote(member_id, num):
 
     return("Removed quote!")
 
-client.run("NzI4ODgyNTIwOTk2NzA4NDA0.XwA2xQ.LJkd2QZ9oHUluZPCDi2FMacEycY")
+client.run("")
