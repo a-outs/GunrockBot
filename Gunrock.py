@@ -4,6 +4,7 @@ from discord.ext.commands import Bot
 import operator
 import random
 import pickle
+import datetime
 
 client = commands.Bot(command_prefix = '-')
 
@@ -48,13 +49,22 @@ async def boomer(ctx, member : discord.Member):
     member_as_mention = "<@" + member_id + ">"
     await ctx.send(member_as_mention + " okay boomer")
 
+@client.command()
+async def dab(ctx, member : discord.Member):
+    member_id = member.id
+    member_id = str(member_id)
+    member_as_mention = "<@" + member_id + ">"
+    await ctx.send(member_as_mention + " get dabbed on! <O/")
+
+@client.command()
+async def telltime(ctx):
+    await ctx.send(datetime.datetime.now().strftime("%Y %m %d %H:%M"))
 
 @client.command()
 async def add(ctx, member : discord.Member, num):
     member_id = member.id
     username = member.display_name
     num_int = int(num)
-
 
     # Save to pickle
     current_score = save_score(member_id, num_int)
@@ -66,11 +76,12 @@ async def add(ctx, member : discord.Member, num):
 @client.command()
 async def remove(ctx, member : discord.Member, num):
     member_id = member.id
+    username = member.display_name
     num_int = int(num)
 
     # Save to pickle
     current_score = remove_score(member_id, num_int)
-    await ctx.send(f"Gotcha, removed {num} points to {member}'s swear jar! Current score: " + str(current_score))
+    await ctx.send(f"Gotcha, removed {num} points from " + username + "'s swear jar! Current score: " + str(current_score))
 
     #else:
     #    await ctx.send("Looks like you set the number value to be something other than 1 or 5.")
@@ -95,9 +106,10 @@ async def resetscore(ctx):
 @client.command()
 async def addquote(ctx, member : discord.Member, *, message):
     member_id = member.id
+    username = member.display_name
     save_quote(member_id, message)
 
-    await ctx.send(f"Okie, added to {member}'s quotebook: {message}")
+    await ctx.send("Okie, added to " + username + f"'s quotebook: {message}")
 
 @client.command()
 async def quote(ctx, member: discord.Member):
@@ -204,15 +216,15 @@ def get_leaderboard():
     for i in sorted_dict:
         print(place_count)
 
-        # Convert the user ID into a member object
-        username = client.fetch_user(i).name
-        print(username)
-
+        # Convert the user ID into a username
+        id_in_int = int(i)
+        user = client.get_user(id_in_int)
+        username = user.name
 
         place_count += 1;
         if (place_count <= 5):
             addon_message += str(place_count) + ": " + username + ' ' + str(sorted_dict[i]) + "\n"
-            print(addon_message)
+            #print(addon_message)
     addon_message = "```" + addon_message + "```"
     return(addon_message)
 
@@ -331,5 +343,4 @@ def remove_quote(member_id, num):
 
     return("Removed quote!")
 
-
-client.run("NzI4ODgyNTIwOTk2NzA4NDA0.XwFsEw.Fc-Ry0HGapp_SF8BI4Cehw-LgFA")
+client.run("")
