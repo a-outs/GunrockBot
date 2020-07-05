@@ -353,8 +353,7 @@ def remove_quote(member_id, num):
     return("Removed quote!")
 
 def get_course_data(course_code):
-    gencat = open("20202021GenCat.txt", "r")
-    with open("20202021GenCat.txt", "r") as csv_file:
+    with open("20202021GenCat.txt", "r", encoding='utf8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
             if(row[0].find(course_code) == 0):
