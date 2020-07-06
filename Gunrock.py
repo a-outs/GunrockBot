@@ -5,6 +5,8 @@ import operator
 import random
 import pickle
 import datetime
+import csv
+import sys
 
 client = commands.Bot(command_prefix = '%')
 
@@ -37,7 +39,8 @@ async def manual(ctx):
     instructions += ".addquote @user (type quote after @user): Add a quote to the mentioned user's quotebook. \n\n"
     instructions += ".quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
     instructions += ".listquotes @user: Lists all of the mentioned user's quotes. \n\n"
-    instructions += ".removequote @user (insert quote number here): Removes the designated quote from the mentioned user's quote book. ```"
+    instructions += ".removequote @user (insert quote number here): Removes the designated quote from the mentioned user's quote book. \n\n"
+    instructions += ".getcourse [course code]: Gives you the full course name and description. Ex. .getcourse MAT 021A```"
 
     await ctx.send(instructions)
 
@@ -57,10 +60,6 @@ async def dab(ctx, member : discord.Member):
 @client.command()
 async def telltime(ctx):
     await ctx.send(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
-
-@client.command()
-async def mergetest(ctx):
-    await ctx.send("You shouldn't be using this command...")
 
 @client.command()
 async def add(ctx, member : discord.Member, num):
@@ -119,12 +118,16 @@ async def quote(ctx, member: discord.Member):
 async def listquotes(ctx, member: discord.Member):
     member_id = member.id
     #all_quotes =
-    await ctx.send(list_quotes(member_id))
+    await ctx.send(list_quotes(member_id, member.display_name))
 
 @client.command()
 async def removequote(ctx, member: discord.Member, num):
     member_id = member.id
     await ctx.send(remove_quote(member_id, num))
+
+@client.command()
+async def getcourse(ctx, course_prefix, course_suffix):
+    await ctx.send(get_course_data(course_prefix + " " + course_suffix))
 
 def save_score(member_id, num):
     # On command
@@ -239,6 +242,8 @@ def save_quote(member_id, quote):
     pickle_in = open("test2.pickle", "rb")
     dict = pickle.load(pickle_in)
 
+    # quote = datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + " - \"" + quote + "\"" # <-- typical ISO format
+    quote = datetime.datetime.now().strftime("%b %d, %Y @ %I:%M %p") + " - \"" + quote + "\"" # <-- typical freedom format
     member_string = str(member_id)
     if member_string not in dict:
         dict[member_string] = []
@@ -253,7 +258,7 @@ def save_quote(member_id, quote):
     print(dict)
     pickle_out.close()
 
-def list_quotes(member_id):
+def list_quotes(member_id, member_display_name):
     try:
         pickle_in = open("test2.pickle", "rb")
 
@@ -273,13 +278,13 @@ def list_quotes(member_id):
     elif member_string in dict:
         quote_list = dict[member_string]
 
-    all_quotes = ''
+    all_quotes = member_display_name + "\'s Quotes:\n"
     place_count = 0
     # Loop through the user's quotes and print them out in one message
     for i in quote_list:
         place_count += 1
         place_count_str = str(place_count)
-        all_quotes += place_count_str + ": " +i  + "\n"
+        all_quotes += place_count_str + ": " + i  + "\n"
     return all_quotes
 
 def get_random_quote(member_id):
@@ -340,4 +345,12 @@ def remove_quote(member_id, num):
 
     return("Removed quote!")
 
-client.run("")
+def get_course_data(course_code):
+    gencat = open("20202021GenCat.txt", "r")
+    with open("20202021GenCat.txt", "r") as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            if(row[0].find(course_code) == 0):
+                return row[1] + " - " + row[14]
+
+client.run(sys.argv[1])
