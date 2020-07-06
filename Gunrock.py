@@ -399,7 +399,7 @@ def get_course_data(course_code):
             if(len(header) == 0):
                 header = row
             if(row[0].find(course_code) == 0):
-                output_string = "Here's your data!\n\n"
+                output_string = "Here's your data!\n~~       ~~\n"
                 output_string += "**" + course_code + " - " + row[1] + "**\n > " + row[14] + "\n\n"
                 output_string += "Credits: " + row[2] + "\n"
                 for x in range(3, 14):
@@ -414,7 +414,6 @@ def get_course_data(course_code):
                     if x != 5:
                         if x != 13:
                             output_string += "| "
-                #output_string += "**"
-                return output_string
+                return output_string + "\n~~       ~~"
 
 client.run(sys.argv[1])
