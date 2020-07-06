@@ -22,7 +22,7 @@ except FileNotFoundError:
 
 prefixes = pickle.load(pickle_prefix_in)
 
-default_prefix = '%'
+default_prefix = '.'
 
 def prefix_saving():
     pickle_out = open("prefixes.pickle", "wb")
@@ -60,20 +60,26 @@ async def on_member_remove(member):
 client.remove_command('help')
 @client.command()
 async def help(ctx):
+    guild = ctx.guild
+    prefix = ""
+    if guild:
+        prefix = prefixes.get(guild.id, default_prefix)
+    else:
+        prefix = default_prefix
     instructions = " ```Here are the commands: \n\n"
-    instructions += ".add @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
-    instructions += ".remove @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
-    instructions += ".leaderboard: Shows the top 5 in the swear jar. \n\n"
-    instructions += ".addquote @user (type quote after @user): Add a quote to the mentioned user's quotebook. \n\n"
-    instructions += ".quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
-    instructions += ".listquotes @user: Lists all of the mentioned user's quotes. \n\n"
-    instructions += ".removequote @user (insert quote number here): Removes the designated quote from the mentioned user's quote book. \n\n"
-    instructions += ".getcourse [course code]: Gives you the full course name and description. Ex. .getcourse MAT 021A```"
+    instructions += prefix + "add @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
+    instructions += prefix + "remove @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
+    instructions += prefix + "leaderboard: Shows the top 5 in the swear jar. \n\n"
+    instructions += prefix + "addquote @user (type quote after @user): Add a quote to the mentioned user's quotebook. \n\n"
+    instructions += prefix + "quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
+    instructions += prefix + "listquotes @user: Lists all of the mentioned user's quotes. \n\n"
+    instructions += prefix + "removequote @user (insert quote number here): Removes the designated quote from the mentioned user's quote book. \n\n"
+    instructions += prefix + "getcourse [course code]: Gives you the full course name and description. Ex. " + prefix + "getcourse MAT 021A```"
 
     await ctx.send(instructions)
 
 @client.command()
-#@has_permissions(manage_guild=True)
+@has_permissions(manage_guild=True)
 async def setprefix(ctx, arg):
     prefixes[ctx.guild.id] = arg
     prefix_saving()
