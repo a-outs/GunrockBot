@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
+from discord.ext.commands import has_permissions
 import operator
 import random
 import pickle
@@ -8,19 +9,47 @@ import datetime
 import csv
 import sys
 
-client = commands.Bot(command_prefix = '%')
+#initializes the prefixes dictionary
+prefixes = {}
+
+#loads the prefixes file
+try:
+    pickle_prefix_in = open("prefixes.pickle", "rb")
+except FileNotFoundError:
+    # If the code is being run for the first time and therefore a dictionary does not exist
+    pickle_prefix_out = open("prefixes.pickle", "wb")
+    pickle.dump(prefixes, pickle_prefix_out)
+    pickle_prefix_out.close()
+
+prefixes = pickle.load(pickle_prefix_in)
+
+default_prefix = '.'
+
+#a function to save new prefixes to the prefixes file
+def prefix_saving():
+    pickle_out = open("prefixes.pickle", "wb")
+    pickle.dump(prefixes, pickle_out)
+    pickle_out.close()
+
+#the function to determine what the prefix is whenever a command is called
+async def determine_prefix(bot, message):
+    guild = message.guild
+
+    if guild:
+        return prefixes.get(guild.id, default_prefix)
+    else:
+        return default_prefix
+
+client = commands.Bot(command_prefix = determine_prefix)
 
 # Events
 @client.event
 async def on_ready():
     print('ready')
 
-'''
 @client.event
 async def on_command_error(ctx, error):
-    await ctx.send("Command error: do .manual to see the availible commands in their correct format")
-'''
-
+    await ctx.send(error)
 
 @client.event
 async def on_member_join(member):
@@ -30,20 +59,33 @@ async def on_member_join(member):
 async def on_member_remove(member):
     print(f'{member} yeeted away from the server.')
 
+client.remove_command('help')
 @client.command()
-async def manual(ctx):
+async def help(ctx):
+    guild = ctx.guild
+    prefix = ""
+    if guild:
+        prefix = prefixes.get(guild.id, default_prefix)
+    else:
+        prefix = default_prefix
     instructions = " ```Here are the commands: \n\n"
-    instructions += ".add @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
-    instructions += ".remove @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
-    instructions += ".leaderboard: Shows the top 5 in the swear jar. \n\n"
-    instructions += ".addquote @user (type quote after @user): Add a quote to the mentioned user's quotebook. \n\n"
-    instructions += ".quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
-    instructions += ".listquotes @user: Lists all of the mentioned user's quotes. \n\n"
-    instructions += ".removequote @user (insert quote number here): Removes the designated quote from the mentioned user's quote book. \n\n"
-    instructions += ".getcourse [course code]: Gives you the full course name and description. Ex. .getcourse MAT 021A```"
+    instructions += prefix + "add @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
+    instructions += prefix + "remove @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
+    instructions += prefix + "leaderboard: Shows the top 5 in the swear jar. \n\n"
+    instructions += prefix + "addquote @user (type quote after @user): Add a quote to the mentioned user's quotebook. \n\n"
+    instructions += prefix + "quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
+    instructions += prefix + "listquotes @user: Lists all of the mentioned user's quotes. \n\n"
+    instructions += prefix + "removequote @user (insert quote number here): Removes the designated quote from the mentioned user's quote book. \n\n"
+    instructions += prefix + "getcourse [course code]: Gives you the full course name and description. Ex. " + prefix + "getcourse MAT 021A```"
 
     await ctx.send(instructions)
 
+@client.command()
+@has_permissions(manage_guild=True)
+async def setprefix(ctx, arg):
+    prefixes[ctx.guild.id] = arg
+    prefix_saving()
+    await ctx.send("Prefix changed to " + arg)
 
 @client.command()
 async def boomer(ctx, member : discord.Member):
@@ -61,7 +103,7 @@ async def dab(ctx, member : discord.Member):
 
 @client.command()
 async def telltime(ctx):
-    await ctx.send(datetime.datetime.now().strftime("%Y-%m-%d %H:%M"))
+    await ctx.send(datetime.datetime.now().strftime("%b %d, %Y @ %I:%M %p"))
 
 @client.command()
 async def add(ctx, member : discord.Member, num):
@@ -97,7 +139,7 @@ async def leaderboard(ctx):
 @client.command()
 async def resetscore(ctx):
     if ctx.message.author.id == 140698580590657536:
-        pickle_out = open("test.pickle", "wb")
+        pickle_out = open("swearjar.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
@@ -137,16 +179,16 @@ async def getcourse(ctx, course_prefix, course_suffix):
 def save_score(member_id, num):
     # On command
     try:
-        pickle_in = open("test.pickle", "rb")
+        pickle_in = open("swearjar.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test.pickle", "wb")
+        pickle_out = open("swearjar.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test.pickle", "rb")
+    pickle_in = open("swearjar.pickle", "rb")
     dict = pickle.load(pickle_in)
 
 
@@ -159,7 +201,7 @@ def save_score(member_id, num):
     current_score = dict[member_string]
 
     # After editing dictionary, save it back into the pickle
-    pickle_out = open("test.pickle", "wb")
+    pickle_out = open("swearjar.pickle", "wb")
     pickle.dump(dict, pickle_out)
     pickle_out.close()
 
@@ -168,16 +210,16 @@ def save_score(member_id, num):
 def remove_score(member_id, num):
     # On command
     try:
-        pickle_in = open("test.pickle", "rb")
+        pickle_in = open("swearjar.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test.pickle", "wb")
+        pickle_out = open("swearjar.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test.pickle", "rb")
+    pickle_in = open("swearjar.pickle", "rb")
     dict = pickle.load(pickle_in)
 
 
@@ -192,7 +234,7 @@ def remove_score(member_id, num):
     current_score = dict[member_string]
 
     # After editing dictionary, save it back into the pickle
-    pickle_out = open("test.pickle", "wb")
+    pickle_out = open("swearjar.pickle", "wb")
     pickle.dump(dict, pickle_out)
     pickle_out.close()
 
@@ -200,16 +242,16 @@ def remove_score(member_id, num):
 
 def get_leaderboard():
     try:
-        pickle_in = open("test.pickle", "rb")
+        pickle_in = open("swearjar.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test.pickle", "wb")
+        pickle_out = open("swearjar.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test.pickle", "rb")
+    pickle_in = open("swearjar.pickle", "rb")
     score_dict = pickle.load(pickle_in)
 
     # Sort the dictionary
@@ -221,8 +263,6 @@ def get_leaderboard():
 
     # Loop thorugh the list
     for i in sorted_dict:
-        print(place_count)
-
         # Convert the user ID into a username
         id_in_int = int(i)
         user = client.get_user(id_in_int)
@@ -237,46 +277,45 @@ def get_leaderboard():
 
 def save_quote(member_id, quote):
     try:
-        pickle_in = open("test2.pickle", "rb")
+        pickle_in = open("quotebook.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test2.pickle", "wb")
+        pickle_out = open("quotebook.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test2.pickle", "rb")
+    pickle_in = open("quotebook.pickle", "rb")
     dict = pickle.load(pickle_in)
 
-    # quote = datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + " - \"" + quote + "\"" # <-- typical ISO format
     quote = datetime.datetime.now().strftime("%b %d, %Y @ %I:%M %p") + " - \"" + quote + "\"" # <-- typical freedom format
     member_string = str(member_id)
     if member_string not in dict:
         dict[member_string] = []
         dict[member_string].append(quote)
     elif member_string in dict:
-        print(quote)
+        #print(quote)
         dict[member_string].append(quote)
 
     # Save to pickle
-    pickle_out = open("test2.pickle", "wb")
+    pickle_out = open("quotebook.pickle", "wb")
     pickle.dump(dict, pickle_out)
-    print(dict)
+    #print(dict)
     pickle_out.close()
 
 def list_quotes(member_id, member_display_name):
     try:
-        pickle_in = open("test2.pickle", "rb")
+        pickle_in = open("quotebook.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test2.pickle", "wb")
+        pickle_out = open("quotebook.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test2.pickle", "rb")
+    pickle_in = open("quotebook.pickle", "rb")
     dict = pickle.load(pickle_in)
 
     member_string = str(member_id)
@@ -296,15 +335,15 @@ def list_quotes(member_id, member_display_name):
 
 def get_random_quote(member_id):
     try:
-        pickle_in = open("test2.pickle", "rb")
+        pickle_in = open("quotebook.pickle", "rb")
 
     except FileNotFoundError:
-        pickle_out = open("test2.pickle", "wb")
+        pickle_out = open("quotebook.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test2.pickle", "rb")
+    pickle_in = open("quotebook.pickle", "rb")
     dict = pickle.load(pickle_in)
 
 
@@ -321,16 +360,16 @@ def remove_quote(member_id, num):
     num = int(num)
 
     try:
-        pickle_in = open("test2.pickle", "rb")
+        pickle_in = open("quotebook.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test2.pickle", "wb")
+        pickle_out = open("quotebook.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test2.pickle", "rb")
+    pickle_in = open("quotebook.pickle", "rb")
     dict = pickle.load(pickle_in)
 
     member_string = str(member_id)
@@ -345,9 +384,9 @@ def remove_quote(member_id, num):
             return("The index you gave does not exist. :(")
 
     # Save dic to pickle
-    pickle_out = open("test2.pickle", "wb")
+    pickle_out = open("quotebook.pickle", "wb")
     pickle.dump(dict, pickle_out)
-    print(dict)
+    #print(dict)
     pickle_out.close()
 
     return("Removed quote!")
@@ -355,8 +394,27 @@ def remove_quote(member_id, num):
 def get_course_data(course_code):
     with open("20202021GenCat.txt", "r", encoding='utf8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
+        header = []
         for row in csv_reader:
+            if(len(header) == 0):
+                header = row
             if(row[0].find(course_code) == 0):
-                return row[1] + " - " + row[14]
+                output_string = "Here's your data!\n\n"
+                output_string += "**" + course_code + " - " + row[1] + "**\n > " + row[14] + "\n\n"
+                output_string += "Credits: " + row[2] + "\n"
+                for x in range(3, 14):
+                    if x == 6:
+                        output_string += "\n"
+                    output_string += header[x]
+                    if(len(row[x]) > 0):
+                        output_string += " :white_check_mark: "
+                    else:
+                        output_string += " :x: "
+                    output_string += " "
+                    if x != 5:
+                        if x != 13:
+                            output_string += "| "
+                #output_string += "**"
+                return output_string
 
 client.run(sys.argv[1])
