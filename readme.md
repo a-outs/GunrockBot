@@ -14,6 +14,7 @@ Here is a list of features
 - Removed score restrictions for add/remove functions. You can now add/remove integer values that aren’t 1 or
 - Allows custom prefixes for servers
 - Added getcourse command, retrieves data about a specific UC Davis course given a course code
+- Added editquote command, allows for editing of existing qutoes
 - Changed the manual command to help
 - Removed .boomer
 - Demoted Peter from admin. Gunrock is admin now

@@ -69,13 +69,14 @@ async def help(ctx):
     else:
         prefix = default_prefix
     instructions = " ```Here are the commands: \n\n"
-    instructions += prefix + "add @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
-    instructions += prefix + "remove @user (1 or 5 after @user): Adds 1 or 5 point to the mentioned user's swear jar. \n\n"
+    instructions += prefix + "add @user [number]: Adds [number] points to the mentioned user's swear jar. \n\n"
+    instructions += prefix + "remove @user [nummber]: Removes [number] points from the mentioned user's swear jar. \n\n"
     instructions += prefix + "leaderboard: Shows the top 5 in the swear jar. \n\n"
-    instructions += prefix + "addquote @user (type quote after @user): Add a quote to the mentioned user's quotebook. \n\n"
+    instructions += prefix + "addquote @user [quote]: Add a quote to the mentioned user's quotebook. \n\n"
     instructions += prefix + "quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
     instructions += prefix + "listquotes @user: Lists all of the mentioned user's quotes. \n\n"
-    instructions += prefix + "removequote @user (insert quote number here): Removes the designated quote from the mentioned user's quote book. \n\n"
+    instructions += prefix + "removequote @user [quote number]: Removes the designated quote from the mentioned user's quote book. \n\n"
+    instructions += prefix + "editquote @user [quote number] [new quote]: Overwrites the user's quote at [number] with [new quote]. \n\n"
     instructions += prefix + "getcourse [course code]: Gives you the full course name and description. Ex. " + prefix + "getcourse MAT 021A```"
 
     await ctx.send(instructions)
@@ -133,7 +134,6 @@ async def remove(ctx, member : discord.Member, num):
 
 @client.command()
 async def leaderboard(ctx):
-    #bot_message = get_leaderboard()
     await ctx.send(get_leaderboard())
 
 @client.command()
@@ -164,13 +164,17 @@ async def quote(ctx, member: discord.Member):
 @client.command()
 async def listquotes(ctx, member: discord.Member):
     member_id = member.id
-    #all_quotes =
     await ctx.send(list_quotes(member_id, member.display_name))
 
 @client.command()
 async def removequote(ctx, member: discord.Member, num):
     member_id = member.id
     await ctx.send(remove_quote(member_id, num))
+
+@client.command()
+async def editquote(ctx, member: discord.Member, num, *, new_quote):
+    member_id = member.id
+    await ctx.send(edit_quote(member_id, num, new_quote))
 
 @client.command()
 async def getcourse(ctx, course_prefix, course_suffix):
@@ -390,6 +394,40 @@ def remove_quote(member_id, num):
     pickle_out.close()
 
     return("Removed quote!")
+
+def edit_quote(member_id, num, new_quote):
+    num = int(num)
+
+    try:
+        pickle_in = open("quotebook.pickle", "rb")
+
+    except FileNotFoundError:
+        # If the code is being run for the first time and therefore a dictionary does not exist
+        pickle_out = open("quotebook.pickle", "wb")
+        empty_dict = {}
+        pickle.dump(empty_dict, pickle_out)
+        pickle_out.close()
+
+    pickle_in = open("quotebook.pickle", "rb")
+    dict = pickle.load(pickle_in)
+
+    member_string = str(member_id)
+    if member_string not in dict:
+        # Say that that user doesn't exist
+        return("That user doesn't have any quotes, you absolute boomer.")
+    elif member_string in dict:
+        quote_list = dict[member_string]
+        if num <= len(quote_list):
+            dict[member_string][num-1] = new_quote
+        else:
+            return("The index you gave does not exist. :(")
+
+    # Save dic to pickle
+    pickle_out = open("quotebook.pickle", "wb")
+    pickle.dump(dict, pickle_out)
+    pickle_out.close()
+
+    return("Edited quote!")
 
 def get_course_data(course_code):
     with open("20202021GenCat.txt", "r", encoding='utf8') as csv_file:
