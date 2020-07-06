@@ -131,7 +131,7 @@ async def leaderboard(ctx):
 @client.command()
 async def resetscore(ctx):
     if ctx.message.author.id == 140698580590657536:
-        pickle_out = open("test.pickle", "wb")
+        pickle_out = open("swearjar.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
@@ -171,16 +171,16 @@ async def getcourse(ctx, course_prefix, course_suffix):
 def save_score(member_id, num):
     # On command
     try:
-        pickle_in = open("test.pickle", "rb")
+        pickle_in = open("swearjar.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test.pickle", "wb")
+        pickle_out = open("swearjar.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test.pickle", "rb")
+    pickle_in = open("swearjar.pickle", "rb")
     dict = pickle.load(pickle_in)
 
 
@@ -193,7 +193,7 @@ def save_score(member_id, num):
     current_score = dict[member_string]
 
     # After editing dictionary, save it back into the pickle
-    pickle_out = open("test.pickle", "wb")
+    pickle_out = open("swearjar.pickle", "wb")
     pickle.dump(dict, pickle_out)
     pickle_out.close()
 
@@ -202,16 +202,16 @@ def save_score(member_id, num):
 def remove_score(member_id, num):
     # On command
     try:
-        pickle_in = open("test.pickle", "rb")
+        pickle_in = open("swearjar.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test.pickle", "wb")
+        pickle_out = open("swearjar.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test.pickle", "rb")
+    pickle_in = open("swearjar.pickle", "rb")
     dict = pickle.load(pickle_in)
 
 
@@ -226,7 +226,7 @@ def remove_score(member_id, num):
     current_score = dict[member_string]
 
     # After editing dictionary, save it back into the pickle
-    pickle_out = open("test.pickle", "wb")
+    pickle_out = open("swearjar.pickle", "wb")
     pickle.dump(dict, pickle_out)
     pickle_out.close()
 
@@ -234,16 +234,16 @@ def remove_score(member_id, num):
 
 def get_leaderboard():
     try:
-        pickle_in = open("test.pickle", "rb")
+        pickle_in = open("swearjar.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test.pickle", "wb")
+        pickle_out = open("swearjar.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test.pickle", "rb")
+    pickle_in = open("swearjar.pickle", "rb")
     score_dict = pickle.load(pickle_in)
 
     # Sort the dictionary
@@ -269,16 +269,16 @@ def get_leaderboard():
 
 def save_quote(member_id, quote):
     try:
-        pickle_in = open("test2.pickle", "rb")
+        pickle_in = open("quotebook.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test2.pickle", "wb")
+        pickle_out = open("quotebook.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test2.pickle", "rb")
+    pickle_in = open("quotebook.pickle", "rb")
     dict = pickle.load(pickle_in)
 
     quote = datetime.datetime.now().strftime("%b %d, %Y @ %I:%M %p") + " - \"" + quote + "\"" # <-- typical freedom format
@@ -291,23 +291,23 @@ def save_quote(member_id, quote):
         dict[member_string].append(quote)
 
     # Save to pickle
-    pickle_out = open("test2.pickle", "wb")
+    pickle_out = open("quotebook.pickle", "wb")
     pickle.dump(dict, pickle_out)
     #print(dict)
     pickle_out.close()
 
 def list_quotes(member_id, member_display_name):
     try:
-        pickle_in = open("test2.pickle", "rb")
+        pickle_in = open("quotebook.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test2.pickle", "wb")
+        pickle_out = open("quotebook.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test2.pickle", "rb")
+    pickle_in = open("quotebook.pickle", "rb")
     dict = pickle.load(pickle_in)
 
     member_string = str(member_id)
@@ -327,15 +327,15 @@ def list_quotes(member_id, member_display_name):
 
 def get_random_quote(member_id):
     try:
-        pickle_in = open("test2.pickle", "rb")
+        pickle_in = open("quotebook.pickle", "rb")
 
     except FileNotFoundError:
-        pickle_out = open("test2.pickle", "wb")
+        pickle_out = open("quotebook.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test2.pickle", "rb")
+    pickle_in = open("quotebook.pickle", "rb")
     dict = pickle.load(pickle_in)
 
 
@@ -352,16 +352,16 @@ def remove_quote(member_id, num):
     num = int(num)
 
     try:
-        pickle_in = open("test2.pickle", "rb")
+        pickle_in = open("quotebook.pickle", "rb")
 
     except FileNotFoundError:
         # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("test2.pickle", "wb")
+        pickle_out = open("quotebook.pickle", "wb")
         empty_dict = {}
         pickle.dump(empty_dict, pickle_out)
         pickle_out.close()
 
-    pickle_in = open("test2.pickle", "rb")
+    pickle_in = open("quotebook.pickle", "rb")
     dict = pickle.load(pickle_in)
 
     member_string = str(member_id)
@@ -376,7 +376,7 @@ def remove_quote(member_id, num):
             return("The index you gave does not exist. :(")
 
     # Save dic to pickle
-    pickle_out = open("test2.pickle", "wb")
+    pickle_out = open("quotebook.pickle", "wb")
     pickle.dump(dict, pickle_out)
     #print(dict)
     pickle_out.close()
