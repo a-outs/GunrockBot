@@ -3,7 +3,9 @@ The best bot around for UC Davis Discord Servers
 
 ## FEATURES
 
-Here is a list of features
+Swearjar - Keep track of swears.
+Quotebook - Save quotes.
+Get UC Davis course data with a simple command.
 
 ## CHANGELOG
 
@@ -11,7 +13,7 @@ Here is a list of features
 
 - Reduced mentions that Gunrock does to decrease spam
 - Remove function for swearjar added:  you can now deduct points from a swearjar.
-- Removed score restrictions for add/remove functions. You can now add/remove integer values that aren’t 1 or
+- Removed score restrictions for add/remove functions. You can now add/remove integer values that aren’t 1 or 5
 - Allows custom prefixes for servers
 - Added getcourse command, retrieves data about a specific UC Davis course given a course code
 - Added editquote command, allows for editing of existing qutoes
