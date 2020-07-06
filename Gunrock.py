@@ -9,7 +9,7 @@ import datetime
 import csv
 import sys
 
-#initializes the prefixes dictionary
+# initializes the prefixes dictionary
 prefixes = {}
 
 #loads the prefixes file
