@@ -49,7 +49,8 @@ async def on_ready():
 
 @client.event
 async def on_command_error(ctx, error):
-    await ctx.send(error)
+    embed = discord.Embed(title="Error!", description=str(error), color=0xd11313)
+    await ctx.send(embed = embed)
 
 @client.event
 async def on_member_join(member):
@@ -68,8 +69,8 @@ async def help(ctx):
         prefix = prefixes.get(guild.id, default_prefix)
     else:
         prefix = default_prefix
-    instructions = " ```Here are the commands: \n\n"
-    instructions += prefix + "add @user [number]: Adds [number] points to the mentioned user's swear jar. \n\n"
+
+    instructions = prefix + "add @user [number]: Adds [number] points to the mentioned user's swear jar. \n\n"
     instructions += prefix + "remove @user [nummber]: Removes [number] points from the mentioned user's swear jar. \n\n"
     instructions += prefix + "leaderboard: Shows the top 5 in the swear jar. \n\n"
     instructions += prefix + "addquote @user [quote]: Add a quote to the mentioned user's quotebook. \n\n"
@@ -77,16 +78,19 @@ async def help(ctx):
     instructions += prefix + "listquotes @user: Lists all of the mentioned user's quotes. \n\n"
     instructions += prefix + "removequote @user [quote number]: Removes the designated quote from the mentioned user's quote book. \n\n"
     instructions += prefix + "editquote @user [quote number] [new quote]: Overwrites the user's quote at [number] with [new quote]. \n\n"
-    instructions += prefix + "getcourse [course code]: Gives you the full course name and description. Ex. " + prefix + "getcourse MAT 021A```"
+    instructions += prefix + "getcourse [course code]: Gives you the full course name and description. Make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there. Ex. " + prefix + "getcourse MAT 021A "
 
-    await ctx.send(instructions)
+    embed = discord.Embed(title="Commands:", description=instructions, color=0xffbf00)
+
+    await ctx.send(embed = embed)
 
 @client.command()
 @has_permissions(manage_guild=True)
 async def setprefix(ctx, arg):
     prefixes[ctx.guild.id] = arg
     prefix_saving()
-    await ctx.send("Prefix changed to " + arg)
+    embed = discord.Embed(title="Prefix changed!", description="Prefix is now " + arg, color=0xffbf00)
+    await ctx.send(embed = embed)
 
 @client.command()
 async def boomer(ctx, member : discord.Member):
@@ -103,82 +107,99 @@ async def dab(ctx, member : discord.Member):
     await ctx.send(member_as_mention + " get dabbed on! <O/")
 
 @client.command()
+async def cow(ctx, member : discord.Member):
+    member_id = member.id
+    member_id = str(member_id)
+    member_as_mention = "<@" + member_id + ">"
+    embed = discord.Embed(title="cow r8 machine", description=member_as_mention + " is " + str(random.randint(0,100)) + "% cow", color=0xffbf00)
+    await ctx.send(embed = embed)
+
+@client.command()
 async def telltime(ctx):
-    await ctx.send(datetime.datetime.now().strftime("%b %d, %Y @ %I:%M %p"))
+    embed = discord.Embed(title="the time", description=datetime.datetime.now().strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
+    await ctx.send(embed = embed)
 
 @client.command()
 async def add(ctx, member : discord.Member, num):
     member_id = member.id
-    username = member.display_name
     num_int = int(num)
 
     # Save to pickle
     current_score = save_score(member_id, num_int)
-    await ctx.send(f"Gotcha, added {num} points to " + username + "'s swear jar! Current score: " + str(current_score))
 
-    #else:
-    #    await ctx.send("Looks like you set the number value to be something other than 1 or 5. Why, did someone say something egregiously bad?")
+    member_as_mention = "<@" + str(member.id) + ">"
+    embed = discord.Embed(title="Points Added!", description=f"Gotcha, added {num} points to " + member_as_mention + "'s swear jar! Current score: " + str(current_score), color=0xffbf00)
+    await ctx.send(embed = embed)
 
 @client.command()
 async def remove(ctx, member : discord.Member, num):
     member_id = member.id
-    username = member.display_name
     num_int = int(num)
 
     # Save to pickle
     current_score = remove_score(member_id, num_int)
-    await ctx.send(f"Gotcha, removed {num} points from " + username + "'s swear jar! Current score: " + str(current_score))
 
-    #else:
-    #    await ctx.send("Looks like you set the number value to be something other than 1 or 5.")
+    member_as_mention = "<@" + str(member_id) + ">"
+    embed = discord.Embed(title="Points Removed!", description=f"Gotcha, removed {num} points from " + member_as_mention + "'s swear jar! Current score: " + str(current_score), color=0xffbf00)
+    await ctx.send(embed = embed)
 
 @client.command()
 async def leaderboard(ctx):
-    await ctx.send(get_leaderboard())
+    await ctx.send(embed = get_leaderboard())
 
 @client.command()
+@has_permissions(administrator=True)
 async def resetscore(ctx):
-    if ctx.message.author.id == 140698580590657536:
-        pickle_out = open("swearjar.pickle", "wb")
-        empty_dict = {}
-        pickle.dump(empty_dict, pickle_out)
-        pickle_out.close()
-        await ctx.send("Swear jar reset")
-    else:
-        await ctx.send("You don't have permission to do that, you absolute boomer.")
+    output_string = ""
+    pickle_out = open("swearjar.pickle", "wb")
+    empty_dict = {}
+    pickle.dump(empty_dict, pickle_out)
+    pickle_out.close()
+    embed = discord.Embed(title="Swearjar Reset!", description="The swear jar has been reset. Are you happy now?", color=0xffbf00)
+    await ctx.send(embed = embed)
 
 
 @client.command()
 async def addquote(ctx, member : discord.Member, *, message):
     member_id = member.id
-    username = member.display_name
     save_quote(member_id, message)
 
-    await ctx.send("Okie, added to " + username + f"'s quotebook: {message}")
+    member_as_mention = "<@" + str(member_id) + ">"
+    embed = discord.Embed(title="Quote Added!", description="Okie, added to " + member_as_mention + f"'s quotebook: {message}", color=0xffbf00)
+    embed.timestamp = datetime.datetime.utcnow()
+    await ctx.send(embed = embed)
 
 @client.command()
 async def quote(ctx, member: discord.Member):
     member_id = member.id
-    await ctx.send(get_random_quote(member_id))
+
+    embed = discord.Embed(title=get_random_quote(member_id), color=0xffbf00)
+    await ctx.send(embed = embed)
 
 @client.command()
 async def listquotes(ctx, member: discord.Member):
     member_id = member.id
-    await ctx.send(list_quotes(member_id, member.display_name))
+    member_as_mention = "<@" + str(member_id) + ">"
+    await ctx.send(embed = list_quotes(member_id, member.display_name))
 
 @client.command()
 async def removequote(ctx, member: discord.Member, num):
     member_id = member.id
-    await ctx.send(remove_quote(member_id, num))
+
+    embed = discord.Embed(title=remove_quote(member_id, num), color=0xffbf00)
+    await ctx.send(embed = embed)
 
 @client.command()
 async def editquote(ctx, member: discord.Member, num, *, new_quote):
     member_id = member.id
-    await ctx.send(edit_quote(member_id, num, new_quote))
+
+    embed = discord.Embed(edit_quote(member_id, num, new_quote), color=0xffbf00)
+    await ctx.send(embed = embed)
 
 @client.command()
 async def getcourse(ctx, course_prefix, course_suffix):
-    await ctx.send(get_course_data(course_prefix + " " + course_suffix))
+
+    await ctx.send(embed = get_course_data(course_prefix + " " + course_suffix))
 
 def save_score(member_id, num):
     # On command
@@ -261,7 +282,6 @@ def get_leaderboard():
     # Sort the dictionary
     sorted_dict = dict(sorted(score_dict.items(), key=operator.itemgetter(1),reverse=True))
 
-    bot_message = "Swear jar Leaderboards:\n"
     addon_message = ""
     place_count = 0;
 
@@ -275,9 +295,9 @@ def get_leaderboard():
         place_count += 1;
         if (place_count <= 5):
             addon_message += str(place_count) + ": " + username + ' ' + str(sorted_dict[i]) + "\n"
-            #print(addon_message)
-    addon_message = "```" + addon_message + "```"
-    return(addon_message)
+
+    embed = discord.Embed(title="Swear jar Leaderboard:", description=addon_message, color=0xffbf00)
+    return(embed)
 
 def save_quote(member_id, quote):
     try:
@@ -328,14 +348,17 @@ def list_quotes(member_id, member_display_name):
     elif member_string in dict:
         quote_list = dict[member_string]
 
-    all_quotes = member_display_name + "\'s Quotes:\n"
+    all_quotes = ""
     place_count = 0
     # Loop through the user's quotes and print them out in one message
     for i in quote_list:
         place_count += 1
         place_count_str = str(place_count)
         all_quotes += place_count_str + ": " + i  + "\n"
-    return all_quotes
+
+    embed = discord.Embed(title=member_display_name + "\'s Quotes:", description=all_quotes, color=0xffbf00)
+
+    return embed
 
 def get_random_quote(member_id):
     try:
@@ -358,7 +381,7 @@ def get_random_quote(member_id):
     elif member_string in dict:
         quote_list = dict[member_string]
         random_quote = random.choice(quote_list)
-        return('"' + random_quote + '"')
+        return(random_quote)
 
 def remove_quote(member_id, num):
     num = int(num)
@@ -437,21 +460,22 @@ def get_course_data(course_code):
             if(len(header) == 0):
                 header = row
             if(row[0].find(course_code) == 0):
-                output_string = "Here's your data!\n~~       ~~\n"
-                output_string += "**" + course_code + " - " + row[1] + "**\n > " + row[14] + "\n\n"
-                output_string += "Credits: " + row[2] + "\n"
+                embed = discord.Embed(title=course_code + " - " + row[1], description=row[14], color=0xffbf00)
+                field_name = "Credits: " + row[2]
+                field_data = ""
                 for x in range(3, 14):
                     if x == 6:
-                        output_string += "\n"
-                    output_string += header[x]
+                        field_data += "\n"
+                    field_data += header[x]
                     if(len(row[x]) > 0):
-                        output_string += " :white_check_mark: "
+                        field_data += " :white_check_mark: "
                     else:
-                        output_string += " :x: "
-                    output_string += " "
+                        field_data += " :x: "
+                    field_data += " "
                     if x != 5:
                         if x != 13:
-                            output_string += "| "
-                return output_string + "\n~~       ~~"
+                            field_data += "| "
+                embed.add_field(name=field_name, value=field_data, inline=True)
+                return embed
 
 client.run(sys.argv[1])
