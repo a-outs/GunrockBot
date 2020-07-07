@@ -477,5 +477,7 @@ def get_course_data(course_code):
                             field_data += "| "
                 embed.add_field(name=field_name, value=field_data, inline=True)
                 return embed
+        embed = discord.Embed(title="Course Not Found!", description="I couldn't find that course! In your requested course code, make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there.", color=0xd11313)
+        return embed
 
 client.run(sys.argv[1])
