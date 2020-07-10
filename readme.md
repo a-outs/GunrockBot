@@ -9,6 +9,12 @@ Get UC Davis course data with a simple command.
 
 ## CHANGELOG
 
+### GUNROCK 1.2
+
+- Added getCRNdata command.
+- Formatted most messages to be in embeds for a cleaner look.
+- Increased functionality of the telltime command.
+
 ### GUNROCK 1.1
 
 - Reduced mentions that Gunrock does to decrease spam

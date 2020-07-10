@@ -1,4 +1,5 @@
 import discord
+from discord.ext import menus
 from discord.ext import commands
 from discord.ext.commands import Bot
 from discord.ext.commands import has_permissions
@@ -8,6 +9,7 @@ import pickle
 import datetime
 import csv
 import sys
+import math
 
 # initializes the prefixes dictionary
 prefixes = {}
@@ -115,8 +117,11 @@ async def cow(ctx, member : discord.Member):
     await ctx.send(embed = embed)
 
 @client.command()
-async def telltime(ctx):
-    embed = discord.Embed(title="the time", description=datetime.datetime.now().strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
+async def bad(ctx, member : discord.Member):
+    member_id = member.id
+    member_id = str(member_id)
+    member_as_mention = "<@" + member_id + ">"
+    embed = discord.Embed(title="you're bad!", description="sorry " + member_as_mention + ", but you're bad", color=0xffbf00)
     await ctx.send(embed = embed)
 
 @client.command()
@@ -193,13 +198,46 @@ async def removequote(ctx, member: discord.Member, num):
 async def editquote(ctx, member: discord.Member, num, *, new_quote):
     member_id = member.id
 
-    embed = discord.Embed(edit_quote(member_id, num, new_quote), color=0xffbf00)
+    embed = discord.Embed(title="Editing Quote...", description=edit_quote(member_id, num, new_quote), color=0xffbf00)
     await ctx.send(embed = embed)
 
 @client.command()
 async def getcourse(ctx, course_prefix, course_suffix):
-
     await ctx.send(embed = get_course_data(course_prefix + " " + course_suffix))
+
+@client.command()
+async def getCRNdata(ctx, course_prefix, course_suffix):
+    await ctx.send(embed = get_CRN_data(course_prefix + " " + course_suffix, 202010))
+
+class TimezoneTimes(menus.Menu):
+    async def send_initial_message(self, ctx, channel):
+        embed = discord.Embed(title="the time", description="1. Pacific Time\n2. Eastern Time\n3. Korean Time\n4. HK Time", color=0xffbf00)
+        return await channel.send(embed = embed)
+
+    @menus.button('1️⃣')
+    async def on_one(self, payload):
+        embed = discord.Embed(title="The Time on the West Coast", description=(datetime.datetime.utcnow() - datetime.timedelta(hours=7)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
+        await self.message.edit(embed = embed)
+
+    @menus.button('2️⃣')
+    async def on_two(self, payload):
+        embed = discord.Embed(title="The Time on the East Coast", description=(datetime.datetime.utcnow() - datetime.timedelta(hours=4)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
+        await self.message.edit(embed = embed)
+
+    @menus.button('3️⃣')
+    async def on_three(self, payload):
+        embed = discord.Embed(title="The Time on the Korean Coast", description=(datetime.datetime.utcnow() + datetime.timedelta(hours=9)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
+        await self.message.edit(embed = embed)
+
+    @menus.button('4️⃣')
+    async def on_four(self, payload):
+        embed = discord.Embed(title="The Time on the HK Coast", description=(datetime.datetime.utcnow() + datetime.timedelta(hours=8)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
+        await self.message.edit(embed = embed)
+
+@client.command()
+async def telltime(ctx):
+    m = TimezoneTimes()
+    await m.start(ctx)
 
 def save_score(member_id, num):
     # On command
@@ -344,7 +382,8 @@ def list_quotes(member_id, member_display_name):
 
     member_string = str(member_id)
     if member_string not in dict:
-        return("That user ain't got no quotes to quote bruh.")
+        all_quotes = "That user ain't got no quotes to quote bruh."
+        quote_list = {}
     elif member_string in dict:
         quote_list = dict[member_string]
 
@@ -355,6 +394,9 @@ def list_quotes(member_id, member_display_name):
         place_count += 1
         place_count_str = str(place_count)
         all_quotes += place_count_str + ": " + i  + "\n"
+
+    if place_count == 0:
+        all_quotes = "That user ain't got no quotes to quote bruh."
 
     embed = discord.Embed(title=member_display_name + "\'s Quotes:", description=all_quotes, color=0xffbf00)
 
@@ -476,8 +518,40 @@ def get_course_data(course_code):
                         if x != 13:
                             field_data += "| "
                 embed.add_field(name=field_name, value=field_data, inline=True)
+                embed.set_footer(text="Run the command getCRNdata " + course_code + " to see data about this course's CRNs")
                 return embed
         embed = discord.Embed(title="Course Not Found!", description="I couldn't find that course! In your requested course code, make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there.", color=0xd11313)
         return embed
+
+def get_CRN_data(course_code, term_code):
+    description_string = ""
+    classes_found = 0
+    crn_data_dict = {}
+    embed = discord.Embed(title="CRN Data for " + course_code, description=description_string, color=0xffbf00)
+    with open(str(term_code) + " CRN Data.csv", "r", encoding='utf8') as csv_file:
+        csv_reader = csv.reader(csv_file, delimiter=',')
+        for row in csv_reader:
+            if(row[11].find(course_code) == 0):
+                classes_found += 1
+                value_string = ""
+                for x in range(1, 10, 2):
+                    if(row[x] != ""):
+                        if(x == 1): value_string += "M: "
+                        elif(x == 3): value_string += "T: "
+                        elif(x == 5): value_string += "W: "
+                        elif(x == 7): value_string += "R: "
+                        elif(x == 9): value_string += "F: "
+                        value_string += str(math.trunc(int(row[x])/60)) + ":" + str(int(row[x])%60).zfill(2) + " - " + str(math.trunc(int(row[x + 1])/60)) + ":" + str(int(row[x + 1])%60).zfill(2) + "\n"
+                try:
+                    crn_data_dict[row[0]] += value_string
+                except KeyError:
+                    crn_data_dict[row[0]] = value_string
+    if classes_found == 0:
+        embed.add_field(name="Error!", value="Class not found! Don't forget to include zero's if the course code has them.")
+    else:
+        for key, value in crn_data_dict.items():
+            embed.add_field(name=key, value=value, inline=False)
+        embed.set_footer(text="Run the command getcourse " + course_code + " to see overall data about this course")
+    return embed
 
 client.run(sys.argv[1])
