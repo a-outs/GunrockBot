@@ -1,6 +1,7 @@
 import discord
 from discord.ext import menus
 from discord.ext import commands
+from discord.utils import get
 from discord.ext.commands import Bot
 from discord.ext.commands import has_permissions
 import operator
@@ -56,6 +57,10 @@ async def on_command_error(ctx, error):
 
 @client.event
 async def on_member_join(member):
+    channel = discord.utils.get(member.guild.channels, name = "👋welcome")
+    role = get(member.guild.roles, name = "Aggie")
+    await member.add_roles(role)
+    await channel.send(f"Fellow Aggie {member.mention} has joined! Go pick a role in #roles and introduce yourself in #introductions! Please join us in the voice chats as well!")
     print(f'Fellow Aggie {member} has joined!')
 
 @client.event
@@ -122,6 +127,14 @@ async def bad(ctx, member : discord.Member):
     member_id = str(member_id)
     member_as_mention = "<@" + member_id + ">"
     embed = discord.Embed(title="you're bad!", description="sorry " + member_as_mention + ", but you're bad", color=0xffbf00)
+    await ctx.send(embed = embed)
+
+@client.command()
+async def simp(ctx, member : discord.Member):
+    member_id = member.id
+    member_id = str(member_id)
+    member_as_mention = "<@" + member_id + ">"
+    embed = discord.Embed(title="simp r8 machine", description=member_as_mention + " is 100% simp", color=0xffbf00)
     await ctx.send(embed = embed)
 
 @client.command()

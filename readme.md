@@ -9,6 +9,10 @@ Get UC Davis course data with a simple command.
 
 ## CHANGELOG
 
+### GUNROCK 1.3
+
+- Added person welcoming functionality.
+
 ### GUNROCK 1.2
 
 - Added getCRNdata command.
