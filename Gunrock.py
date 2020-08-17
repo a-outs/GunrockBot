@@ -15,6 +15,9 @@ import math
 # initializes the prefixes dictionary
 prefixes = {}
 
+# Global variables
+reactionrole_message_id = 0
+
 #loads the prefixes file
 try:
     pickle_prefix_in = open("prefixes.pickle", "rb")
@@ -67,7 +70,85 @@ async def on_member_join(member):
 async def on_member_remove(member):
     print(f'{member} yeeted away from the server.')
 
+@client.event
+async def on_raw_reaction_add(payload):
+    message_id = payload.message_id
+
+    # If the message reacted to is the reaction role message
+    if message_id == reactionrole_message_id:
+        print("reacted")
+        guild_id = payload.guild_id
+        # Search all guilds and to find one that matches
+        guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+        print(payload.emoji.name);
+        # switch case here
+        # role = discord.utils.get(guild.roles, name = "")
+        # Look through all members of the current guild to find the user that reacted
+        if payload.emoji.name == "🍃":
+            role = discord.utils.get(guild.roles, name = "College of Agricultural & Environmental Sciences")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.add_roles(role)
+        elif payload.emoji.name == "📰":
+            role = discord.utils.get(guild.roles, name = "College of Letters & Science")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.add_roles(role)
+        elif payload.emoji.name == "💻":
+            role = discord.utils.get(guild.roles, name = "College of Engineering")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.add_roles(role)
+        elif payload.emoji.name == "🧬":
+            role = discord.utils.get(guild.roles, name = "College of Biological Sciences")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.add_roles(role)
+
+
+@client.event
+async def on_raw_reaction_remove(payload):
+    message_id = payload.message_id
+
+    if message_id == reactionrole_message_id:
+        guild_id = payload.guild_id
+        # Search all guilds and to find one that matches
+        guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+
+        # switch case here
+        # role = discord.utils.get(guild.roles, name = "")
+        # Look through all members of the current guild to find the user that reacted
+        if payload.emoji.name == "🍃":
+            role = discord.utils.get(guild.roles, name = "College of Agricultural & Environmental Sciences")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.remove_roles(role)
+        elif payload.emoji.name == "📰":
+            role = discord.utils.get(guild.roles, name = "College of Letters & Science")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.remove_roles(role)
+        elif payload.emoji.name == "💻":
+            role = discord.utils.get(guild.roles, name = "College of Engineering")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.remove_roles(role)
+        elif payload.emoji.name == "🧬":
+            role = discord.utils.get(guild.roles, name = "College of Biological Sciences")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.remove_roles(role)
+
 client.remove_command('help')
+
 @client.command()
 async def help(ctx):
     guild = ctx.guild
@@ -90,6 +171,23 @@ async def help(ctx):
     embed = discord.Embed(title="Commands:", description=instructions, color=0xffbf00)
 
     await ctx.send(embed = embed)
+
+@client.command()
+async def rolesetup(ctx)
+    role_messsage = "React to give yourself a role. \n"
+    role_message += "🍃: College of Agricultural & Environmental Sciences \n"
+    role_message += "📰: "College of Letters & Science"
+    role_message += ""
+
+    role_setup_message = await ctx.send()
+
+:newspaper: : College of Letters & Science
+
+:computer: : College of Engineering
+
+:dna: : College of Biological Sciences)
+    message_id = role_setup_message.message_id
+
 
 @client.command()
 @has_permissions(manage_guild=True)
@@ -567,4 +665,5 @@ def get_CRN_data(course_code, term_code):
         embed.set_footer(text="Run the command getcourse " + course_code + " to see overall data about this course")
     return embed
 
-client.run(sys.argv[1])
+#client.run(sys.argv[1])
+client.run('NzI4ODgyNTIwOTk2NzA4NDA0.XwA2vg.Uoj4WoNMzCgklMXUwUsUKjkuEjc')
