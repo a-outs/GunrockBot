@@ -73,14 +73,17 @@ async def on_member_remove(member):
 @client.event
 async def on_raw_reaction_add(payload):
     message_id = payload.message_id
+    print(message_id)
+    print(reactionrole_message_id)
+    print("reacted")
 
     # If the message reacted to is the reaction role message
     if message_id == reactionrole_message_id:
-        print("reacted")
+        print("reacted2")
         guild_id = payload.guild_id
         # Search all guilds and to find one that matches
         guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
-        print(payload.emoji.name);
+        print(payload.emoji.name)
         # switch case here
         # role = discord.utils.get(guild.roles, name = "")
         # Look through all members of the current guild to find the user that reacted
@@ -173,21 +176,17 @@ async def help(ctx):
     await ctx.send(embed = embed)
 
 @client.command()
-async def rolesetup(ctx)
-    role_messsage = "React to give yourself a role. \n"
-    role_message += "🍃: College of Agricultural & Environmental Sciences \n"
-    role_message += "📰: "College of Letters & Science"
-    role_message += ""
+async def rolesetup(ctx):
+    role_message = "React to give yourself a role.\n"
+    role_message += "🍃: College of Agricultural & Environmental Sciences\n"
+    role_message += "📰: College of Letters & Science\n"
+    role_message += "💻: College of Engineering\n"
+    role_message += "🧬: College of Biological Sciences\n"
 
-    role_setup_message = await ctx.send()
-
-:newspaper: : College of Letters & Science
-
-:computer: : College of Engineering
-
-:dna: : College of Biological Sciences)
-    message_id = role_setup_message.message_id
-
+    role_setup_message = await ctx.send(role_message)
+    global reactionrole_message_id
+    reactionrole_message_id = role_setup_message.id
+    
 
 @client.command()
 @has_permissions(manage_guild=True)
