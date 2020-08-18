@@ -664,5 +664,5 @@ def get_CRN_data(course_code, term_code):
         embed.set_footer(text="Run the command getcourse " + course_code + " to see overall data about this course")
     return embed
 
-#client.run(sys.argv[1])
-client.run('NzI4ODgyNTIwOTk2NzA4NDA0.XwA2vg.Uoj4WoNMzCgklMXUwUsUKjkuEjc')
+client.run(sys.argv[1])
+
