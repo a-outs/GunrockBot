@@ -15,9 +15,6 @@ import math
 # initializes the prefixes dictionary
 prefixes = {}
 
-# Global variables
-reactionrole_message_id = 0
-
 #loads the prefixes file
 try:
     pickle_prefix_in = open("prefixes.pickle", "rb")
@@ -73,19 +70,16 @@ async def on_member_remove(member):
 @client.event
 async def on_raw_reaction_add(payload):
     message_id = payload.message_id
-    print(message_id)
-    print(reactionrole_message_id)
-    print("reacted")
+    
+    pickle_in = open("rolesetup_id.pickle", "rb") 
+    rolesetup_id = pickle.load(pickle_in)
 
     # If the message reacted to is the reaction role message
-    if message_id == reactionrole_message_id:
-        print("reacted2")
+    if message_id == rolesetup_id:
         guild_id = payload.guild_id
         # Search all guilds and to find one that matches
         guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
-        print(payload.emoji.name)
-        # switch case here
-        # role = discord.utils.get(guild.roles, name = "")
+  
         # Look through all members of the current guild to find the user that reacted
         if payload.emoji.name == "🍃":
             role = discord.utils.get(guild.roles, name = "College of Agricultural & Environmental Sciences")
@@ -117,7 +111,10 @@ async def on_raw_reaction_add(payload):
 async def on_raw_reaction_remove(payload):
     message_id = payload.message_id
 
-    if message_id == reactionrole_message_id:
+    pickle_in = open("rolesetup_id.pickle", "rb") 
+    rolesetup_id = pickle.load(pickle_in)
+
+    if message_id == rolesetup_id:
         guild_id = payload.guild_id
         # Search all guilds and to find one that matches
         guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
@@ -177,16 +174,15 @@ async def help(ctx):
 
 @client.command()
 async def rolesetup(ctx):
-    role_message = "React to give yourself a role.\n"
-    role_message += "🍃: College of Agricultural & Environmental Sciences\n"
-    role_message += "📰: College of Letters & Science\n"
-    role_message += "💻: College of Engineering\n"
-    role_message += "🧬: College of Biological Sciences\n"
+    role_message = "React to give yourself a role.\n\n"
+    role_message += "🍃: College of Agricultural & Environmental Sciences\n\n"
+    role_message += "📰: College of Letters & Science\n\n"
+    role_message += "💻: College of Engineering\n\n"
+    role_message += "🧬: College of Biological Sciences\n\n"
 
     role_setup_message = await ctx.send(role_message)
-    global reactionrole_message_id
-    reactionrole_message_id = role_setup_message.id
-    
+    # Update the rolesetup message id
+    change_rolesetup_id(role_setup_message.id)
 
 @client.command()
 @has_permissions(manage_guild=True)
@@ -273,7 +269,6 @@ async def resetscore(ctx):
     embed = discord.Embed(title="Swearjar Reset!", description="The swear jar has been reset. Are you happy now?", color=0xffbf00)
     await ctx.send(embed = embed)
 
-
 @client.command()
 async def addquote(ctx, member : discord.Member, *, message):
     member_id = member.id
@@ -349,6 +344,28 @@ async def telltime(ctx):
     m = TimezoneTimes()
     await m.start(ctx)
 
+# Function for changing the rolesetup message id to the newest one
+def change_rolesetup_id(id):
+    try:
+        pickle_in = open("rolesetup_id.pickle", "rb")
+
+    except FileNotFoundError:
+        #print("new pickle file")
+        # If the code is being run for the first time 
+        pickle_out = open("rolesetup_id.pickle", "wb")
+        rolesetup_id = 0
+        pickle.dump(rolesetup_id, pickle_out)
+        pickle_out.close()
+
+    pickle_in = open("rolesetup_id.pickle", "rb") 
+    rolesetup_id = pickle.load(pickle_in)
+    
+    rolesetup_id = id
+
+    pickle_out = open("rolesetup_id.pickle", "wb")
+    pickle.dump(rolesetup_id, pickle_out)
+    pickle_out.close()
+
 def save_score(member_id, num):
     # On command
     try:
@@ -363,7 +380,6 @@ def save_score(member_id, num):
 
     pickle_in = open("swearjar.pickle", "rb")
     dict = pickle.load(pickle_in)
-
 
     member_string = str(member_id)
     if member_string not in dict:
@@ -394,7 +410,6 @@ def remove_score(member_id, num):
 
     pickle_in = open("swearjar.pickle", "rb")
     dict = pickle.load(pickle_in)
-
 
     member_string = str(member_id)
     if member_string not in dict:
@@ -467,13 +482,11 @@ def save_quote(member_id, quote):
         dict[member_string] = []
         dict[member_string].append(quote)
     elif member_string in dict:
-        #print(quote)
         dict[member_string].append(quote)
 
     # Save to pickle
     pickle_out = open("quotebook.pickle", "wb")
     pickle.dump(dict, pickle_out)
-    #print(dict)
     pickle_out.close()
 
 def list_quotes(member_id, member_display_name):
@@ -525,7 +538,6 @@ def get_random_quote(member_id):
     pickle_in = open("quotebook.pickle", "rb")
     dict = pickle.load(pickle_in)
 
-
     member_string = str(member_id)
     if member_string not in dict:
         # Say that that user doesn't exist
@@ -565,7 +577,6 @@ def remove_quote(member_id, num):
     # Save dic to pickle
     pickle_out = open("quotebook.pickle", "wb")
     pickle.dump(dict, pickle_out)
-    #print(dict)
     pickle_out.close()
 
     return("Removed quote!")
@@ -665,4 +676,3 @@ def get_CRN_data(course_code, term_code):
     return embed
 
 client.run(sys.argv[1])
-
