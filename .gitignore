@@ -1,2 +1,5 @@
 #ignores the pickle files
 *.pickle
+
+#ignores vs code files
+.vs/
