@@ -67,7 +67,88 @@ async def on_member_join(member):
 async def on_member_remove(member):
     print(f'{member} yeeted away from the server.')
 
+@client.event
+async def on_raw_reaction_add(payload):
+    message_id = payload.message_id
+    
+    pickle_in = open("rolesetup_id.pickle", "rb") 
+    rolesetup_id = pickle.load(pickle_in)
+
+    # If the message reacted to is the reaction role message
+    if message_id == rolesetup_id:
+        guild_id = payload.guild_id
+        # Search all guilds and to find one that matches
+        guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+  
+        # Look through all members of the current guild to find the user that reacted
+        if payload.emoji.name == "🍃":
+            role = discord.utils.get(guild.roles, name = "College of Agricultural & Environmental Sciences")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.add_roles(role)
+        elif payload.emoji.name == "📰":
+            role = discord.utils.get(guild.roles, name = "College of Letters & Science")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.add_roles(role)
+        elif payload.emoji.name == "💻":
+            role = discord.utils.get(guild.roles, name = "College of Engineering")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.add_roles(role)
+        elif payload.emoji.name == "🧬":
+            role = discord.utils.get(guild.roles, name = "College of Biological Sciences")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.add_roles(role)
+
+
+@client.event
+async def on_raw_reaction_remove(payload):
+    message_id = payload.message_id
+
+    pickle_in = open("rolesetup_id.pickle", "rb") 
+    rolesetup_id = pickle.load(pickle_in)
+
+    if message_id == rolesetup_id:
+        guild_id = payload.guild_id
+        # Search all guilds and to find one that matches
+        guild = discord.utils.find(lambda g: g.id == guild_id, client.guilds)
+
+        # switch case here
+        # role = discord.utils.get(guild.roles, name = "")
+        # Look through all members of the current guild to find the user that reacted
+        if payload.emoji.name == "🍃":
+            role = discord.utils.get(guild.roles, name = "College of Agricultural & Environmental Sciences")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.remove_roles(role)
+        elif payload.emoji.name == "📰":
+            role = discord.utils.get(guild.roles, name = "College of Letters & Science")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.remove_roles(role)
+        elif payload.emoji.name == "💻":
+            role = discord.utils.get(guild.roles, name = "College of Engineering")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.remove_roles(role)
+        elif payload.emoji.name == "🧬":
+            role = discord.utils.get(guild.roles, name = "College of Biological Sciences")
+            if role is not None:
+                member = discord.utils.find(lambda m : m.id == payload.user_id, guild.members)
+                if member is not None:
+                    await member.remove_roles(role)
+
 client.remove_command('help')
+
 @client.command()
 async def help(ctx):
     guild = ctx.guild
@@ -90,6 +171,18 @@ async def help(ctx):
     embed = discord.Embed(title="Commands:", description=instructions, color=0xffbf00)
 
     await ctx.send(embed = embed)
+
+@client.command()
+async def rolesetup(ctx):
+    role_message = "React to give yourself a role.\n\n"
+    role_message += "🍃: College of Agricultural & Environmental Sciences\n\n"
+    role_message += "📰: College of Letters & Science\n\n"
+    role_message += "💻: College of Engineering\n\n"
+    role_message += "🧬: College of Biological Sciences\n\n"
+
+    role_setup_message = await ctx.send(role_message)
+    # Update the rolesetup message id
+    change_rolesetup_id(role_setup_message.id)
 
 @client.command()
 @has_permissions(manage_guild=True)
@@ -176,7 +269,6 @@ async def resetscore(ctx):
     embed = discord.Embed(title="Swearjar Reset!", description="The swear jar has been reset. Are you happy now?", color=0xffbf00)
     await ctx.send(embed = embed)
 
-
 @client.command()
 async def addquote(ctx, member : discord.Member, *, message):
     member_id = member.id
@@ -252,6 +344,28 @@ async def telltime(ctx):
     m = TimezoneTimes()
     await m.start(ctx)
 
+# Function for changing the rolesetup message id to the newest one
+def change_rolesetup_id(id):
+    try:
+        pickle_in = open("rolesetup_id.pickle", "rb")
+
+    except FileNotFoundError:
+        #print("new pickle file")
+        # If the code is being run for the first time 
+        pickle_out = open("rolesetup_id.pickle", "wb")
+        rolesetup_id = 0
+        pickle.dump(rolesetup_id, pickle_out)
+        pickle_out.close()
+
+    pickle_in = open("rolesetup_id.pickle", "rb") 
+    rolesetup_id = pickle.load(pickle_in)
+    
+    rolesetup_id = id
+
+    pickle_out = open("rolesetup_id.pickle", "wb")
+    pickle.dump(rolesetup_id, pickle_out)
+    pickle_out.close()
+
 def save_score(member_id, num):
     # On command
     try:
@@ -266,7 +380,6 @@ def save_score(member_id, num):
 
     pickle_in = open("swearjar.pickle", "rb")
     dict = pickle.load(pickle_in)
-
 
     member_string = str(member_id)
     if member_string not in dict:
@@ -297,7 +410,6 @@ def remove_score(member_id, num):
 
     pickle_in = open("swearjar.pickle", "rb")
     dict = pickle.load(pickle_in)
-
 
     member_string = str(member_id)
     if member_string not in dict:
@@ -370,13 +482,11 @@ def save_quote(member_id, quote):
         dict[member_string] = []
         dict[member_string].append(quote)
     elif member_string in dict:
-        #print(quote)
         dict[member_string].append(quote)
 
     # Save to pickle
     pickle_out = open("quotebook.pickle", "wb")
     pickle.dump(dict, pickle_out)
-    #print(dict)
     pickle_out.close()
 
 def list_quotes(member_id, member_display_name):
@@ -428,7 +538,6 @@ def get_random_quote(member_id):
     pickle_in = open("quotebook.pickle", "rb")
     dict = pickle.load(pickle_in)
 
-
     member_string = str(member_id)
     if member_string not in dict:
         # Say that that user doesn't exist
@@ -468,7 +577,6 @@ def remove_quote(member_id, num):
     # Save dic to pickle
     pickle_out = open("quotebook.pickle", "wb")
     pickle.dump(dict, pickle_out)
-    #print(dict)
     pickle_out.close()
 
     return("Removed quote!")
