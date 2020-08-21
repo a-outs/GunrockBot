@@ -67,12 +67,55 @@ async def on_member_join(member):
 async def on_member_remove(member):
     print(f'{member} yeeted away from the server.')
 
+#
+# HELP COMMAND
+#
+
+client.remove_command('help')
+@client.command()
+async def help(ctx):
+    guild = ctx.guild
+    prefix = ""
+    if guild:
+        prefix = prefixes.get(guild.id, default_prefix)
+    else:
+        prefix = default_prefix
+
+    instructions = prefix + "add @user [number]: Adds [number] points to the mentioned user's swear jar. \n\n"
+    instructions += prefix + "remove @user [nummber]: Removes [number] points from the mentioned user's swear jar. \n\n"
+    instructions += prefix + "leaderboard: Shows the top 5 in the swear jar. \n\n"
+    instructions += prefix + "addquote @user [quote]: Add a quote to the mentioned user's quotebook. \n\n"
+    instructions += prefix + "quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
+    instructions += prefix + "listquotes @user: Lists all of the mentioned user's quotes. \n\n"
+    instructions += prefix + "removequote @user [quote number]: Removes the designated quote from the mentioned user's quote book. \n\n"
+    instructions += prefix + "editquote @user [quote number] [new quote]: Overwrites the user's quote at [number] with [new quote]. \n\n"
+    instructions += prefix + "getcourse [course code]: Gives you the full course name and description. Make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there. Ex. " + prefix + "getcourse MAT 021A "
+
+    embed = discord.Embed(title="Commands:", description=instructions, color=0xffbf00)
+
+    await ctx.send(embed = embed)
+
+#
+# REACTION ROLE COMMANDS AND FUNCTIONS
+#
+
+@client.command()
+async def rolesetup(ctx):
+    role_message = "React to give yourself a role.\n\n"
+    role_message += "🍃: College of Agricultural & Environmental Sciences\n\n"
+    role_message += "📰: College of Letters & Science\n\n"
+    role_message += "💻: College of Engineering\n\n"
+    role_message += "🧬: College of Biological Sciences\n\n"
+
+    role_setup_message = await ctx.send(role_message)
+    # Update the rolesetup message id
+    change_rolesetup_id(role_setup_message.id, ctx.guild.id)
+
 @client.event
 async def on_raw_reaction_add(payload):
     message_id = payload.message_id
-    
-    pickle_in = open("rolesetup_id.pickle", "rb") 
-    rolesetup_id = pickle.load(pickle_in)
+
+    rolesetup_id = get_rolesetup_id(payload)
 
     # If the message reacted to is the reaction role message
     if message_id == rolesetup_id:
@@ -111,8 +154,7 @@ async def on_raw_reaction_add(payload):
 async def on_raw_reaction_remove(payload):
     message_id = payload.message_id
 
-    pickle_in = open("rolesetup_id.pickle", "rb") 
-    rolesetup_id = pickle.load(pickle_in)
+    rolesetup_id = get_rolesetup_id(payload)
 
     if message_id == rolesetup_id:
         guild_id = payload.guild_id
@@ -147,42 +189,43 @@ async def on_raw_reaction_remove(payload):
                 if member is not None:
                     await member.remove_roles(role)
 
-client.remove_command('help')
+# Function for changing the rolesetup message id to the newest one
+def change_rolesetup_id(id, guild_id):
+    try:
+        pickle_in = open("rolesetup_id.pickle", "rb")
 
-@client.command()
-async def help(ctx):
-    guild = ctx.guild
-    prefix = ""
-    if guild:
-        prefix = prefixes.get(guild.id, default_prefix)
-    else:
-        prefix = default_prefix
+    except FileNotFoundError:
+        #print("new pickle file")
+        # If the code is being run for the first time 
+        pickle_out = open("rolesetup_id.pickle", "wb")
+        rolesetup_id = {}
+        pickle.dump(rolesetup_id, pickle_out)
+        pickle_out.close()
 
-    instructions = prefix + "add @user [number]: Adds [number] points to the mentioned user's swear jar. \n\n"
-    instructions += prefix + "remove @user [nummber]: Removes [number] points from the mentioned user's swear jar. \n\n"
-    instructions += prefix + "leaderboard: Shows the top 5 in the swear jar. \n\n"
-    instructions += prefix + "addquote @user [quote]: Add a quote to the mentioned user's quotebook. \n\n"
-    instructions += prefix + "quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
-    instructions += prefix + "listquotes @user: Lists all of the mentioned user's quotes. \n\n"
-    instructions += prefix + "removequote @user [quote number]: Removes the designated quote from the mentioned user's quote book. \n\n"
-    instructions += prefix + "editquote @user [quote number] [new quote]: Overwrites the user's quote at [number] with [new quote]. \n\n"
-    instructions += prefix + "getcourse [course code]: Gives you the full course name and description. Make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there. Ex. " + prefix + "getcourse MAT 021A "
+    pickle_in = open("rolesetup_id.pickle", "rb")
 
-    embed = discord.Embed(title="Commands:", description=instructions, color=0xffbf00)
+    rolesetup_id = pickle.load(pickle_in)
+    
+    rolesetup_id[guild_id] = id
 
-    await ctx.send(embed = embed)
+    pickle_out = open("rolesetup_id.pickle", "wb")
+    pickle.dump(rolesetup_id, pickle_out)
+    pickle_out.close()
 
-@client.command()
-async def rolesetup(ctx):
-    role_message = "React to give yourself a role.\n\n"
-    role_message += "🍃: College of Agricultural & Environmental Sciences\n\n"
-    role_message += "📰: College of Letters & Science\n\n"
-    role_message += "💻: College of Engineering\n\n"
-    role_message += "🧬: College of Biological Sciences\n\n"
+def get_rolesetup_id(payload):
+    try:
+        pickle_in = open("rolesetup_id.pickle", "rb") 
 
-    role_setup_message = await ctx.send(role_message)
-    # Update the rolesetup message id
-    change_rolesetup_id(role_setup_message.id)
+    except FileNotFoundError:
+        return ''
+
+    pickle_in = open("rolesetup_id.pickle", "rb")
+
+    rolesetup_id = pickle.load(pickle_in)
+
+    return rolesetup_id[payload.guild_id]
+
+# SET PREFIX COMMAND
 
 @client.command()
 @has_permissions(manage_guild=True)
@@ -192,6 +235,9 @@ async def setprefix(ctx, arg):
     embed = discord.Embed(title="Prefix changed!", description="Prefix is now " + arg, color=0xffbf00)
     await ctx.send(embed = embed)
 
+#
+# MEME COMMANDS
+#
 @client.command()
 async def boomer(ctx, member : discord.Member):
     member_id = member.id
@@ -230,6 +276,9 @@ async def simp(ctx, member : discord.Member):
     embed = discord.Embed(title="simp r8 machine", description=member_as_mention + " is 100% simp", color=0xffbf00)
     await ctx.send(embed = embed)
 
+#
+# SWEARJAR COMMANDS
+#
 @client.command()
 async def add(ctx, member : discord.Member, num):
     member_id = member.id
@@ -261,7 +310,6 @@ async def leaderboard(ctx):
 @client.command()
 @has_permissions(administrator=True)
 async def resetscore(ctx):
-    output_string = ""
     pickle_out = open("swearjar.pickle", "wb")
     empty_dict = {}
     pickle.dump(empty_dict, pickle_out)
@@ -289,7 +337,6 @@ async def quote(ctx, member: discord.Member):
 @client.command()
 async def listquotes(ctx, member: discord.Member):
     member_id = member.id
-    member_as_mention = "<@" + str(member_id) + ">"
     await ctx.send(embed = list_quotes(member_id, member.display_name))
 
 @client.command()
@@ -343,28 +390,6 @@ class TimezoneTimes(menus.Menu):
 async def telltime(ctx):
     m = TimezoneTimes()
     await m.start(ctx)
-
-# Function for changing the rolesetup message id to the newest one
-def change_rolesetup_id(id):
-    try:
-        pickle_in = open("rolesetup_id.pickle", "rb")
-
-    except FileNotFoundError:
-        #print("new pickle file")
-        # If the code is being run for the first time 
-        pickle_out = open("rolesetup_id.pickle", "wb")
-        rolesetup_id = 0
-        pickle.dump(rolesetup_id, pickle_out)
-        pickle_out.close()
-
-    pickle_in = open("rolesetup_id.pickle", "rb") 
-    rolesetup_id = pickle.load(pickle_in)
-    
-    rolesetup_id = id
-
-    pickle_out = open("rolesetup_id.pickle", "wb")
-    pickle.dump(rolesetup_id, pickle_out)
-    pickle_out.close()
 
 def save_score(member_id, num):
     # On command
@@ -446,7 +471,7 @@ def get_leaderboard():
     sorted_dict = dict(sorted(score_dict.items(), key=operator.itemgetter(1),reverse=True))
 
     addon_message = ""
-    place_count = 0;
+    place_count = 0
 
     # Loop thorugh the list
     for i in sorted_dict:
@@ -455,7 +480,7 @@ def get_leaderboard():
         user = client.get_user(id_in_int)
         username = user.name
 
-        place_count += 1;
+        place_count += 1
         if (place_count <= 5):
             addon_message += str(place_count) + ": " + username + ' ' + str(sorted_dict[i]) + "\n"
 
