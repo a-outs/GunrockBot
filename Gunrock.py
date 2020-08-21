@@ -44,7 +44,8 @@ async def determine_prefix(bot, message):
         return default_prefix
 
 initial_extensions = [
-    'cogs.reactroles'
+    'cogs.reactroles',
+    'cogs.swearjar'
 ]
 
 client = commands.Bot(command_prefix = determine_prefix, description="Gunrock the Bot!")
@@ -156,6 +157,8 @@ async def simp(ctx, member : discord.Member):
     embed = discord.Embed(title="simp r8 machine", description=member_as_mention + " is 100% simp", color=0xffbf00)
     await ctx.send(embed = embed)
 
+"""
+
 #
 # SWEARJAR COMMANDS
 #
@@ -197,80 +200,6 @@ async def resetscore(ctx):
     pickle_out.close()
     embed = discord.Embed(title="Swearjar Reset!", description="The swear jar has been reset. Are you happy now?", color=0xffbf00)
     await ctx.send(embed = embed)
-
-@client.command()
-async def addquote(ctx, member : discord.Member, *, message):
-    member_id = member.id
-    save_quote(member_id, message)
-
-    member_as_mention = "<@" + str(member_id) + ">"
-    embed = discord.Embed(title="Quote Added!", description="Okie, added to " + member_as_mention + f"'s quotebook: {message}", color=0xffbf00)
-    embed.timestamp = datetime.datetime.utcnow()
-    await ctx.send(embed = embed)
-
-@client.command()
-async def quote(ctx, member: discord.Member):
-    member_id = member.id
-
-    embed = discord.Embed(title=get_random_quote(member_id), color=0xffbf00)
-    await ctx.send(embed = embed)
-
-@client.command()
-async def listquotes(ctx, member: discord.Member):
-    member_id = member.id
-    await ctx.send(embed = list_quotes(member_id, member.display_name))
-
-@client.command()
-async def removequote(ctx, member: discord.Member, num):
-    member_id = member.id
-
-    embed = discord.Embed(title=remove_quote(member_id, num), color=0xffbf00)
-    await ctx.send(embed = embed)
-
-@client.command()
-async def editquote(ctx, member: discord.Member, num, *, new_quote):
-    member_id = member.id
-
-    embed = discord.Embed(title="Editing Quote...", description=edit_quote(member_id, num, new_quote), color=0xffbf00)
-    await ctx.send(embed = embed)
-
-@client.command()
-async def getcourse(ctx, course_prefix, course_suffix):
-    await ctx.send(embed = get_course_data(course_prefix + " " + course_suffix))
-
-@client.command()
-async def getCRNdata(ctx, course_prefix, course_suffix):
-    await ctx.send(embed = get_CRN_data(course_prefix + " " + course_suffix, 202010))
-
-class TimezoneTimes(menus.Menu):
-    async def send_initial_message(self, ctx, channel):
-        embed = discord.Embed(title="the time", description="1. Pacific Time\n2. Eastern Time\n3. Korean Time\n4. HK Time", color=0xffbf00)
-        return await channel.send(embed = embed)
-
-    @menus.button('1️⃣')
-    async def on_one(self, payload):
-        embed = discord.Embed(title="The Time on the West Coast", description=(datetime.datetime.utcnow() - datetime.timedelta(hours=7)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
-        await self.message.edit(embed = embed)
-
-    @menus.button('2️⃣')
-    async def on_two(self, payload):
-        embed = discord.Embed(title="The Time on the East Coast", description=(datetime.datetime.utcnow() - datetime.timedelta(hours=4)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
-        await self.message.edit(embed = embed)
-
-    @menus.button('3️⃣')
-    async def on_three(self, payload):
-        embed = discord.Embed(title="The Time on the Korean Coast", description=(datetime.datetime.utcnow() + datetime.timedelta(hours=9)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
-        await self.message.edit(embed = embed)
-
-    @menus.button('4️⃣')
-    async def on_four(self, payload):
-        embed = discord.Embed(title="The Time on the HK Coast", description=(datetime.datetime.utcnow() + datetime.timedelta(hours=8)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
-        await self.message.edit(embed = embed)
-
-@client.command()
-async def telltime(ctx):
-    m = TimezoneTimes()
-    await m.start(ctx)
 
 def save_score(member_id, num):
     # On command
@@ -367,6 +296,85 @@ def get_leaderboard():
 
     embed = discord.Embed(title="Swear jar Leaderboard:", description=addon_message, color=0xffbf00)
     return(embed)
+"""
+
+#
+# QUOTEBOOK COMMANDS
+#
+
+@client.command()
+async def addquote(ctx, member : discord.Member, *, message):
+    member_id = member.id
+    save_quote(member_id, message)
+
+    member_as_mention = "<@" + str(member_id) + ">"
+    embed = discord.Embed(title="Quote Added!", description="Okie, added to " + member_as_mention + f"'s quotebook: {message}", color=0xffbf00)
+    embed.timestamp = datetime.datetime.utcnow()
+    await ctx.send(embed = embed)
+
+@client.command()
+async def quote(ctx, member: discord.Member):
+    member_id = member.id
+
+    embed = discord.Embed(title=get_random_quote(member_id), color=0xffbf00)
+    await ctx.send(embed = embed)
+
+@client.command()
+async def listquotes(ctx, member: discord.Member):
+    member_id = member.id
+    await ctx.send(embed = list_quotes(member_id, member.display_name))
+
+@client.command()
+async def removequote(ctx, member: discord.Member, num):
+    member_id = member.id
+
+    embed = discord.Embed(title=remove_quote(member_id, num), color=0xffbf00)
+    await ctx.send(embed = embed)
+
+@client.command()
+async def editquote(ctx, member: discord.Member, num, *, new_quote):
+    member_id = member.id
+
+    embed = discord.Embed(title="Editing Quote...", description=edit_quote(member_id, num, new_quote), color=0xffbf00)
+    await ctx.send(embed = embed)
+
+@client.command()
+async def getcourse(ctx, course_prefix, course_suffix):
+    await ctx.send(embed = get_course_data(course_prefix + " " + course_suffix))
+
+@client.command()
+async def getCRNdata(ctx, course_prefix, course_suffix):
+    await ctx.send(embed = get_CRN_data(course_prefix + " " + course_suffix, 202010))
+
+class TimezoneTimes(menus.Menu):
+    async def send_initial_message(self, ctx, channel):
+        embed = discord.Embed(title="the time", description="1. Pacific Time\n2. Eastern Time\n3. Korean Time\n4. HK Time", color=0xffbf00)
+        return await channel.send(embed = embed)
+
+    @menus.button('1️⃣')
+    async def on_one(self, payload):
+        embed = discord.Embed(title="The Time on the West Coast", description=(datetime.datetime.utcnow() - datetime.timedelta(hours=7)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
+        await self.message.edit(embed = embed)
+
+    @menus.button('2️⃣')
+    async def on_two(self, payload):
+        embed = discord.Embed(title="The Time on the East Coast", description=(datetime.datetime.utcnow() - datetime.timedelta(hours=4)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
+        await self.message.edit(embed = embed)
+
+    @menus.button('3️⃣')
+    async def on_three(self, payload):
+        embed = discord.Embed(title="The Time on the Korean Coast", description=(datetime.datetime.utcnow() + datetime.timedelta(hours=9)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
+        await self.message.edit(embed = embed)
+
+    @menus.button('4️⃣')
+    async def on_four(self, payload):
+        embed = discord.Embed(title="The Time on the HK Coast", description=(datetime.datetime.utcnow() + datetime.timedelta(hours=8)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
+        await self.message.edit(embed = embed)
+
+@client.command()
+async def telltime(ctx):
+    m = TimezoneTimes()
+    await m.start(ctx)
 
 def save_quote(member_id, quote):
     try:
