@@ -40,6 +40,7 @@ setprefix - use this to set the bot prefix
 ### GUNROCK 1.4
 
 - Added reaction roles message functionality.
+- Cogged the bot up
 
 ### GUNROCK 1.3
 

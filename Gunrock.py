@@ -45,26 +45,31 @@ async def determine_prefix(bot, message):
 
 initial_extensions = [
     'cogs.reactroles',
-    'cogs.swearjar'
+    'cogs.swearjar',
+    'cogs.quotebook',
+    'cogs.memes',
+    'cogs.data'
 ]
 
 client = commands.Bot(command_prefix = determine_prefix, description="Gunrock the Bot!")
 
 if __name__ == '__main__':
+    #adds the cogs as extensions
     for extension in initial_extensions:
         client.load_extension(extension)
 
-
-# Events
+# when the bot's ready
 @client.event
 async def on_ready():
     print('ready')
 
+# on error
 @client.event
 async def on_command_error(ctx, error):
     embed = discord.Embed(title="Error!", description=str(error), color=0xd11313)
     await ctx.send(embed = embed)
 
+# when a member joins
 @client.event
 async def on_member_join(member):
     channel = discord.utils.get(member.guild.channels, name = "👋welcome")
@@ -73,6 +78,7 @@ async def on_member_join(member):
     await channel.send(f"Fellow Aggie {member.mention} has joined! Go pick a role in #roles and introduce yourself in #introductions! Please join us in the voice chats as well!")
     print(f'Fellow Aggie {member} has joined!')
 
+# when a member leaves
 @client.event
 async def on_member_remove(member):
     print(f'{member} yeeted away from the server.')
@@ -105,8 +111,7 @@ async def help(ctx):
 
     await ctx.send(embed = embed)
 
-# SET PREFIX COMMAND
-
+# set prefix command
 @client.command()
 @has_permissions(manage_guild=True)
 async def setprefix(ctx, arg):
@@ -115,236 +120,20 @@ async def setprefix(ctx, arg):
     embed = discord.Embed(title="Prefix changed!", description="Prefix is now " + arg, color=0xffbf00)
     await ctx.send(embed = embed)
 
-#
-# MEME COMMANDS
-#
-
+# cog reload command
 @client.command()
-async def boomer(ctx, member : discord.Member):
-    member_id = member.id
-    member_id = str(member_id)
-    member_as_mention = "<@" + member_id + ">"
-    await ctx.send(member_as_mention + " okay boomer")
+@has_permissions(manage_guild=True)
+async def cog_reload(ctx, *, cog: str):
+    """Command which Reloads a Module.
+    Remember to use dot path. e.g: cogs.owner"""
 
-@client.command()
-async def dab(ctx, member : discord.Member):
-    member_id = member.id
-    member_id = str(member_id)
-    member_as_mention = "<@" + member_id + ">"
-    await ctx.send(member_as_mention + " get dabbed on! <O/")
-
-@client.command()
-async def cow(ctx, member : discord.Member):
-    member_id = member.id
-    member_id = str(member_id)
-    member_as_mention = "<@" + member_id + ">"
-    embed = discord.Embed(title="cow r8 machine", description=member_as_mention + " is " + str(random.randint(0,100)) + "% cow", color=0xffbf00)
-    await ctx.send(embed = embed)
-
-@client.command()
-async def bad(ctx, member : discord.Member):
-    member_id = member.id
-    member_id = str(member_id)
-    member_as_mention = "<@" + member_id + ">"
-    embed = discord.Embed(title="you're bad!", description="sorry " + member_as_mention + ", but you're bad", color=0xffbf00)
-    await ctx.send(embed = embed)
-
-@client.command()
-async def simp(ctx, member : discord.Member):
-    member_id = member.id
-    member_id = str(member_id)
-    member_as_mention = "<@" + member_id + ">"
-    embed = discord.Embed(title="simp r8 machine", description=member_as_mention + " is 100% simp", color=0xffbf00)
-    await ctx.send(embed = embed)
-
-"""
-
-#
-# SWEARJAR COMMANDS
-#
-
-@client.command()
-async def add(ctx, member : discord.Member, num):
-    member_id = member.id
-    num_int = int(num)
-
-    # Save to pickle
-    current_score = save_score(member_id, num_int)
-
-    member_as_mention = "<@" + str(member.id) + ">"
-    embed = discord.Embed(title="Points Added!", description=f"Gotcha, added {num} points to " + member_as_mention + "'s swear jar! Current score: " + str(current_score), color=0xffbf00)
-    await ctx.send(embed = embed)
-
-@client.command()
-async def remove(ctx, member : discord.Member, num):
-    member_id = member.id
-    num_int = int(num)
-
-    # Save to pickle
-    current_score = remove_score(member_id, num_int)
-
-    member_as_mention = "<@" + str(member_id) + ">"
-    embed = discord.Embed(title="Points Removed!", description=f"Gotcha, removed {num} points from " + member_as_mention + "'s swear jar! Current score: " + str(current_score), color=0xffbf00)
-    await ctx.send(embed = embed)
-
-@client.command()
-async def leaderboard(ctx):
-    await ctx.send(embed = get_leaderboard())
-
-@client.command()
-@has_permissions(administrator=True)
-async def resetscore(ctx):
-    pickle_out = open("pickles/swearjar.pickle", "wb")
-    empty_dict = {}
-    pickle.dump(empty_dict, pickle_out)
-    pickle_out.close()
-    embed = discord.Embed(title="Swearjar Reset!", description="The swear jar has been reset. Are you happy now?", color=0xffbf00)
-    await ctx.send(embed = embed)
-
-def save_score(member_id, num):
-    # On command
     try:
-        pickle_in = open("pickles/swearjar.pickle", "rb")
-
-    except FileNotFoundError:
-        # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("pickles/swearjar.pickle", "wb")
-        empty_dict = {}
-        pickle.dump(empty_dict, pickle_out)
-        pickle_out.close()
-
-    pickle_in = open("pickles/swearjar.pickle", "rb")
-    dict = pickle.load(pickle_in)
-
-    member_string = str(member_id)
-    if member_string not in dict:
-        dict[member_string] = num
-    elif member_string in dict:
-        dict[member_string] += num
-
-    current_score = dict[member_string]
-
-    # After editing dictionary, save it back into the pickle
-    pickle_out = open("pickles/swearjar.pickle", "wb")
-    pickle.dump(dict, pickle_out)
-    pickle_out.close()
-
-    return(current_score)
-
-def remove_score(member_id, num):
-    # On command
-    try:
-        pickle_in = open("pickles/swearjar.pickle", "rb")
-
-    except FileNotFoundError:
-        # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("pickles/swearjar.pickle", "wb")
-        empty_dict = {}
-        pickle.dump(empty_dict, pickle_out)
-        pickle_out.close()
-
-    pickle_in = open("pickles/swearjar.pickle", "rb")
-    dict = pickle.load(pickle_in)
-
-    member_string = str(member_id)
-    if member_string not in dict:
-        dict[member_string] = num
-    elif member_string in dict:
-        dict[member_string] -= num
-
-        if dict[member_string] < 0:
-            dict[member_string] = 0
-    current_score = dict[member_string]
-
-    # After editing dictionary, save it back into the pickle
-    pickle_out = open("pickles/swearjar.pickle", "wb")
-    pickle.dump(dict, pickle_out)
-    pickle_out.close()
-
-    return(current_score)
-
-def get_leaderboard():
-    try:
-        pickle_in = open("pickles/swearjar.pickle", "rb")
-
-    except FileNotFoundError:
-        # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("pickles/swearjar.pickle", "wb")
-        empty_dict = {}
-        pickle.dump(empty_dict, pickle_out)
-        pickle_out.close()
-
-    pickle_in = open("pickles/swearjar.pickle", "rb")
-    score_dict = pickle.load(pickle_in)
-
-    # Sort the dictionary
-    sorted_dict = dict(sorted(score_dict.items(), key=operator.itemgetter(1),reverse=True))
-
-    addon_message = ""
-    place_count = 0
-
-    # Loop thorugh the list
-    for i in sorted_dict:
-        # Convert the user ID into a username
-        id_in_int = int(i)
-        user = client.get_user(id_in_int)
-        username = user.name
-
-        place_count += 1
-        if (place_count <= 5):
-            addon_message += str(place_count) + ": " + username + ' ' + str(sorted_dict[i]) + "\n"
-
-    embed = discord.Embed(title="Swear jar Leaderboard:", description=addon_message, color=0xffbf00)
-    return(embed)
-"""
-
-#
-# QUOTEBOOK COMMANDS
-#
-
-@client.command()
-async def addquote(ctx, member : discord.Member, *, message):
-    member_id = member.id
-    save_quote(member_id, message)
-
-    member_as_mention = "<@" + str(member_id) + ">"
-    embed = discord.Embed(title="Quote Added!", description="Okie, added to " + member_as_mention + f"'s quotebook: {message}", color=0xffbf00)
-    embed.timestamp = datetime.datetime.utcnow()
-    await ctx.send(embed = embed)
-
-@client.command()
-async def quote(ctx, member: discord.Member):
-    member_id = member.id
-
-    embed = discord.Embed(title=get_random_quote(member_id), color=0xffbf00)
-    await ctx.send(embed = embed)
-
-@client.command()
-async def listquotes(ctx, member: discord.Member):
-    member_id = member.id
-    await ctx.send(embed = list_quotes(member_id, member.display_name))
-
-@client.command()
-async def removequote(ctx, member: discord.Member, num):
-    member_id = member.id
-
-    embed = discord.Embed(title=remove_quote(member_id, num), color=0xffbf00)
-    await ctx.send(embed = embed)
-
-@client.command()
-async def editquote(ctx, member: discord.Member, num, *, new_quote):
-    member_id = member.id
-
-    embed = discord.Embed(title="Editing Quote...", description=edit_quote(member_id, num, new_quote), color=0xffbf00)
-    await ctx.send(embed = embed)
-
-@client.command()
-async def getcourse(ctx, course_prefix, course_suffix):
-    await ctx.send(embed = get_course_data(course_prefix + " " + course_suffix))
-
-@client.command()
-async def getCRNdata(ctx, course_prefix, course_suffix):
-    await ctx.send(embed = get_CRN_data(course_prefix + " " + course_suffix, 202010))
+        client.unload_extension(cog)
+        client.load_extension(cog)
+    except Exception as e:
+        await ctx.send(f'**`ERROR:`** {type(e).__name__} - {e}')
+    else:
+        await ctx.send('**`SUCCESS`**')
 
 class TimezoneTimes(menus.Menu):
     async def send_initial_message(self, ctx, channel):
@@ -375,218 +164,5 @@ class TimezoneTimes(menus.Menu):
 async def telltime(ctx):
     m = TimezoneTimes()
     await m.start(ctx)
-
-def save_quote(member_id, quote):
-    try:
-        pickle_in = open("pickles/quotebook.pickle", "rb")
-
-    except FileNotFoundError:
-        # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("pickles/quotebook.pickle", "wb")
-        empty_dict = {}
-        pickle.dump(empty_dict, pickle_out)
-        pickle_out.close()
-
-    pickle_in = open("pickles/quotebook.pickle", "rb")
-    dict = pickle.load(pickle_in)
-
-    quote = datetime.datetime.now().strftime("%b %d, %Y @ %I:%M %p") + " - \"" + quote + "\"" # <-- typical freedom format
-    member_string = str(member_id)
-    if member_string not in dict:
-        dict[member_string] = []
-        dict[member_string].append(quote)
-    elif member_string in dict:
-        dict[member_string].append(quote)
-
-    # Save to pickle
-    pickle_out = open("pickles/quotebook.pickle", "wb")
-    pickle.dump(dict, pickle_out)
-    pickle_out.close()
-
-def list_quotes(member_id, member_display_name):
-    try:
-        pickle_in = open("pickles/quotebook.pickle", "rb")
-
-    except FileNotFoundError:
-        # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("pickles/quotebook.pickle", "wb")
-        empty_dict = {}
-        pickle.dump(empty_dict, pickle_out)
-        pickle_out.close()
-
-    pickle_in = open("pickles/quotebook.pickle", "rb")
-    dict = pickle.load(pickle_in)
-
-    member_string = str(member_id)
-    if member_string not in dict:
-        all_quotes = "That user ain't got no quotes to quote bruh."
-        quote_list = {}
-    elif member_string in dict:
-        quote_list = dict[member_string]
-
-    all_quotes = ""
-    place_count = 0
-    # Loop through the user's quotes and print them out in one message
-    for i in quote_list:
-        place_count += 1
-        place_count_str = str(place_count)
-        all_quotes += place_count_str + ": " + i  + "\n"
-
-    if place_count == 0:
-        all_quotes = "That user ain't got no quotes to quote bruh."
-
-    embed = discord.Embed(title=member_display_name + "\'s Quotes:", description=all_quotes, color=0xffbf00)
-
-    return embed
-
-def get_random_quote(member_id):
-    try:
-        pickle_in = open("pickles/quotebook.pickle", "rb")
-
-    except FileNotFoundError:
-        pickle_out = open("pickles/quotebook.pickle", "wb")
-        empty_dict = {}
-        pickle.dump(empty_dict, pickle_out)
-        pickle_out.close()
-
-    pickle_in = open("pickles/quotebook.pickle", "rb")
-    dict = pickle.load(pickle_in)
-
-    member_string = str(member_id)
-    if member_string not in dict:
-        # Say that that user doesn't exist
-        return("That user doesn't have any quotes, you absolute boomer.")
-    elif member_string in dict:
-        quote_list = dict[member_string]
-        random_quote = random.choice(quote_list)
-        return(random_quote)
-
-def remove_quote(member_id, num):
-    num = int(num)
-
-    try:
-        pickle_in = open("pickles/quotebook.pickle", "rb")
-
-    except FileNotFoundError:
-        # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("pickles/quotebook.pickle", "wb")
-        empty_dict = {}
-        pickle.dump(empty_dict, pickle_out)
-        pickle_out.close()
-
-    pickle_in = open("pickles/quotebook.pickle", "rb")
-    dict = pickle.load(pickle_in)
-
-    member_string = str(member_id)
-    if member_string not in dict:
-        # Say that that user doesn't exist
-        return("That user doesn't have any quotes, you absolute boomer.")
-    elif member_string in dict:
-        quote_list = dict[member_string]
-        if num <= len(quote_list):
-            del dict[member_string][num-1]
-        else:
-            return("The index you gave does not exist. :(")
-
-    # Save dic to pickle
-    pickle_out = open("pickles/quotebook.pickle", "wb")
-    pickle.dump(dict, pickle_out)
-    pickle_out.close()
-
-    return("Removed quote!")
-
-def edit_quote(member_id, num, new_quote):
-    num = int(num)
-
-    try:
-        pickle_in = open("pickles/quotebook.pickle", "rb")
-
-    except FileNotFoundError:
-        # If the code is being run for the first time and therefore a dictionary does not exist
-        pickle_out = open("pickles/quotebook.pickle", "wb")
-        empty_dict = {}
-        pickle.dump(empty_dict, pickle_out)
-        pickle_out.close()
-
-    pickle_in = open("pickles/quotebook.pickle", "rb")
-    dict = pickle.load(pickle_in)
-
-    member_string = str(member_id)
-    if member_string not in dict:
-        # Say that that user doesn't exist
-        return("That user doesn't have any quotes, you absolute boomer.")
-    elif member_string in dict:
-        quote_list = dict[member_string]
-        if num <= len(quote_list):
-            dict[member_string][num-1] = new_quote
-        else:
-            return("The index you gave does not exist. :(")
-
-    # Save dic to pickle
-    pickle_out = open("pickles/quotebook.pickle", "wb")
-    pickle.dump(dict, pickle_out)
-    pickle_out.close()
-
-    return("Edited quote!")
-
-def get_course_data(course_code):
-    with open("data/20202021GenCat.txt", "r", encoding='utf8') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        header = []
-        for row in csv_reader:
-            if(len(header) == 0):
-                header = row
-            if(row[0].find(course_code) == 0):
-                embed = discord.Embed(title=course_code + " - " + row[1], description=row[14], color=0xffbf00)
-                field_name = "Credits: " + row[2]
-                field_data = ""
-                for x in range(3, 14):
-                    if x == 6:
-                        field_data += "\n"
-                    field_data += header[x]
-                    if(len(row[x]) > 0):
-                        field_data += " :white_check_mark: "
-                    else:
-                        field_data += " :x: "
-                    field_data += " "
-                    if x != 5:
-                        if x != 13:
-                            field_data += "| "
-                embed.add_field(name=field_name, value=field_data, inline=True)
-                embed.set_footer(text="Run the command getCRNdata " + course_code + " to see data about this course's CRNs")
-                return embed
-        embed = discord.Embed(title="Course Not Found!", description="I couldn't find that course! In your requested course code, make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there.", color=0xd11313)
-        return embed
-
-def get_CRN_data(course_code, term_code):
-    description_string = ""
-    classes_found = 0
-    crn_data_dict = {}
-    embed = discord.Embed(title="CRN Data for " + course_code, description=description_string, color=0xffbf00)
-    with open("data/" + str(term_code) + " CRN Data.csv", "r", encoding='utf8') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        for row in csv_reader:
-            if(row[11].find(course_code) == 0):
-                classes_found += 1
-                value_string = ""
-                for x in range(1, 10, 2):
-                    if(row[x] != ""):
-                        if(x == 1): value_string += "M: "
-                        elif(x == 3): value_string += "T: "
-                        elif(x == 5): value_string += "W: "
-                        elif(x == 7): value_string += "R: "
-                        elif(x == 9): value_string += "F: "
-                        value_string += str(math.trunc(int(row[x])/60)) + ":" + str(int(row[x])%60).zfill(2) + " - " + str(math.trunc(int(row[x + 1])/60)) + ":" + str(int(row[x + 1])%60).zfill(2) + "\n"
-                try:
-                    crn_data_dict[row[0]] += value_string
-                except KeyError:
-                    crn_data_dict[row[0]] = value_string
-    if classes_found == 0:
-        embed.add_field(name="Error!", value="Class not found! Don't forget to include zero's if the course code has them.")
-    else:
-        for key, value in crn_data_dict.items():
-            embed.add_field(name=key, value=value, inline=False)
-        embed.set_footer(text="Run the command getcourse " + course_code + " to see overall data about this course")
-    return embed
 
 client.run(sys.argv[1])
