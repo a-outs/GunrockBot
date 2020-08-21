@@ -41,6 +41,7 @@ setprefix - use this to set the bot prefix
 
 - Added reaction roles message functionality.
 - Cogged the bot up
+- Temporarily disabled swearjar functionality
 
 ### GUNROCK 1.3
 

@@ -20,11 +20,11 @@ class DataCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(name='course', aliases=['getcourse'])
     async def getcourse(self, ctx, course_prefix, course_suffix):
         await ctx.send(embed = get_course_data(course_prefix + " " + course_suffix))
 
-    @commands.command()
+    @commands.command(name='crn', aliases=['getCRNs', 'getcrns', 'crns', 'CRN', 'CRNs'])
     async def getCRNdata(self, ctx, course_prefix, course_suffix):
         await ctx.send(embed = get_CRN_data(course_prefix + " " + course_suffix, 202010))
 
@@ -35,8 +35,8 @@ def get_course_data(course_code):
         for row in csv_reader:
             if(len(header) == 0):
                 header = row
-            if(row[0].find(course_code) == 0):
-                embed = discord.Embed(title=course_code + " - " + row[1], description=row[14], color=0xffbf00)
+            if(row[0].find(course_code.upper()) == 0):
+                embed = discord.Embed(title=course_code.upper() + " - " + row[1], description=row[14], color=0xffbf00)
                 field_name = "Credits: " + row[2]
                 field_data = ""
                 for x in range(3, 14):
@@ -52,7 +52,7 @@ def get_course_data(course_code):
                         if x != 13:
                             field_data += "| "
                 embed.add_field(name=field_name, value=field_data, inline=True)
-                embed.set_footer(text="Run the command getCRNdata " + course_code + " to see data about this course's CRNs")
+                embed.set_footer(text="Run the command crn " + course_code.upper() + " to see data about this course's CRNs")
                 return embed
         embed = discord.Embed(title="Course Not Found!", description="I couldn't find that course! In your requested course code, make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there.", color=0xd11313)
         return embed
@@ -61,11 +61,11 @@ def get_CRN_data(course_code, term_code):
     description_string = ""
     classes_found = 0
     crn_data_dict = {}
-    embed = discord.Embed(title="CRN Data for " + course_code, description=description_string, color=0xffbf00)
+    embed = discord.Embed(title="CRN Data for " + course_code.upper(), description=description_string, color=0xffbf00)
     with open("data/" + str(term_code) + " CRN Data.csv", "r", encoding='utf8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         for row in csv_reader:
-            if(row[11].find(course_code) == 0):
+            if(row[11].find(course_code.upper()) == 0):
                 classes_found += 1
                 value_string = ""
                 for x in range(1, 10, 2):
@@ -85,7 +85,7 @@ def get_CRN_data(course_code, term_code):
     else:
         for key, value in crn_data_dict.items():
             embed.add_field(name=key, value=value, inline=False)
-        embed.set_footer(text="Run the command getcourse " + course_code + " to see overall data about this course")
+        embed.set_footer(text="Run the command course " + course_code.upper() + " to see overall data about this course")
     return embed
 
 def setup(bot):
