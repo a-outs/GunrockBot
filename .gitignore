@@ -1,5 +1,9 @@
 #ignores the pickle files
 *.pickle
 
+#ignores unimportant python files
+*.pyc
+*.pyo
+
 #ignores vs code files
 .vs/
