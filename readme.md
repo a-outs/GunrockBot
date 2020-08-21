@@ -7,7 +7,39 @@ Swearjar - Keep track of swears.
 Quotebook - Save quotes.
 Get UC Davis course data with a simple command.
 
+## COMMANDS
+
+### General Commands
+
+help - run this to get a list of commands
+
+### Swear Jar Commands
+
+add - use this to add points to a user's swearjar  
+(prefix)add [@member] [points to add]  
+  
+remove - use this to remove points from a user's swearjar  
+(prefix)remove [@member] [points to remove]  
+  
+leaderboard - run this to see the leaderboard of the swearjar  
+(prefix)leaderboard  
+
+### Admin Only Commands
+
+rolemessagesetup - use this to set up the reaction roles message, the emojis, and their respective roles. Requires the manage guild permission  
+(prefix)rolemessagesetup [reaction role message content],[emojis in their respective order, seperated by %],[role names, seperated by %]  
+  
+rolesetup - run this command to send the official message that users would react to to recieve their roles. Requires the manage guild permission  
+(prefix)rolesetup  
+  
+setprefix - use this to set the bot prefix  
+(prefix)setprefix [newprefix]  
+
 ## CHANGELOG
+
+### GUNROCK 1.4
+
+- Added reaction roles message functionality.
 
 ### GUNROCK 1.3
 
@@ -37,6 +69,6 @@ Get UC Davis course data with a simple command.
 
 ## CREDITS
 
-Currently worked on by Jun and Tim.
-Thanks to Peter for hosting the bot.
-The Gunrock mascot and course data belong to The University of California at Davis. We do not claim ownership of either.
+Currently worked on by Jun and Tim.  
+Thanks to Peter for hosting the bot.  
+The Gunrock mascot and course data belong to The University of California at Davis. We do not claim ownership of either.  
