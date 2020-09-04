@@ -48,7 +48,8 @@ initial_extensions = [
     # 'cogs.swearjar',
     'cogs.quotebook',
     'cogs.memes',
-    'cogs.data'
+    'cogs.data',
+    'cogs.misc'
 ]
 
 client = commands.Bot(command_prefix = determine_prefix, description="Gunrock the Bot!")
@@ -138,34 +139,19 @@ async def cog_reload(ctx, *, cog: str):
     else:
         await ctx.send('**`SUCCESS`**')
 
-class TimezoneTimes(menus.Menu):
-    async def send_initial_message(self, ctx, channel):
-        embed = discord.Embed(title="the time", description="1. Pacific Time\n2. Eastern Time\n3. Korean Time\n4. HK Time", color=0xffbf00)
-        return await channel.send(embed = embed)
+# cog load command
+@client.command(name="loadcog", aliases=['load'])
+@has_permissions(manage_guild=True)
+async def cog_load(ctx, *, cog: str):
+    # Command which loads a Module.
 
-    @menus.button('1️⃣')
-    async def on_one(self, payload):
-        embed = discord.Embed(title="The Time on the West Coast", description=(datetime.datetime.utcnow() - datetime.timedelta(hours=7)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
-        await self.message.edit(embed = embed)
+    cog = "cogs." + cog
 
-    @menus.button('2️⃣')
-    async def on_two(self, payload):
-        embed = discord.Embed(title="The Time on the East Coast", description=(datetime.datetime.utcnow() - datetime.timedelta(hours=4)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
-        await self.message.edit(embed = embed)
-
-    @menus.button('3️⃣')
-    async def on_three(self, payload):
-        embed = discord.Embed(title="The Time on the Korean Coast", description=(datetime.datetime.utcnow() + datetime.timedelta(hours=9)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
-        await self.message.edit(embed = embed)
-
-    @menus.button('4️⃣')
-    async def on_four(self, payload):
-        embed = discord.Embed(title="The Time on the HK Coast", description=(datetime.datetime.utcnow() + datetime.timedelta(hours=8)).strftime("%b %d, %Y @ %I:%M %p"), color=0xffbf00)
-        await self.message.edit(embed = embed)
-
-@client.command()
-async def telltime(ctx):
-    m = TimezoneTimes()
-    await m.start(ctx)
+    try:
+        client.load_extension(cog)
+    except Exception as e:
+        await ctx.send(f'**`ERROR:`** {type(e).__name__} - {e}')
+    else:
+        await ctx.send('**`SUCCESS`**')
 
 client.run(sys.argv[1])
