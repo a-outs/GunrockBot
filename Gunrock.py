@@ -49,7 +49,8 @@ initial_extensions = [
     'cogs.quotebook',
     'cogs.memes',
     'cogs.data',
-    'cogs.misc'
+    #'cogs.misc'
+    'cogs.nuke'
 ]
 
 client = commands.Bot(command_prefix = determine_prefix, description="Gunrock the Bot!")
