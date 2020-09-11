@@ -36,6 +36,8 @@ setprefix - use this to set the bot prefix
 (prefix)setprefix [newprefix]  
 
 ## CHANGELOG
+## GUNROCK 1.4.1
+- Added functionality for nuking
 
 ### GUNROCK 1.4
 
