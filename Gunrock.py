@@ -50,7 +50,10 @@ initial_extensions = [
     'cogs.memes',
     'cogs.data',
     'cogs.misc'
+<<<<<<< HEAD
     'cogs.nuke'
+=======
+>>>>>>> parent of 7dd1d1f... Added Nuke cog
 ]
 
 client = commands.Bot(command_prefix = determine_prefix, description="Gunrock the Bot!")
