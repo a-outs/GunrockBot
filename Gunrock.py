@@ -49,7 +49,7 @@ initial_extensions = [
     'cogs.quotebook',
     'cogs.memes',
     'cogs.data',
-    #'cogs.misc'
+    'cogs.misc'
     'cogs.nuke'
 ]
 
