@@ -59,7 +59,7 @@ class ReactrolesCog(commands.Cog):
         message_id = payload.message_id
 
         rolesetup_id = get_rolesetup_id(payload)
-        # Check if the message reacted to is the reaction role message
+        # If the message reacted to is the reaction role message
         for rolesetup_ids in rolesetup_id:
             if message_id == rolesetup_id[rolesetup_ids]:
                 guild_id = payload.guild_id

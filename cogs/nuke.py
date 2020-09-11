@@ -18,7 +18,7 @@ class NukeCog(commands.Cog):
         messages = []
 
         # Gets messages and adds them to list
-        async for message in channel.history(limit = 5):
+        async for message in channel.history(limit = 100):
             messages.append(message)
 
         # Doomsday countdown message
@@ -31,6 +31,25 @@ class NukeCog(commands.Cog):
         await ctx.send(embed = embed)
         await channel.delete_messages(messages) # Deletes all messages in list
 
+    @commands.command(pass_context = True) # Must do pass_context = True for code to work
+    @commands.has_permissions(manage_guild=True)
+    # Deletes EVERY SINGLE message in a channel one by one and sets the channel to read only while doing so
+    async def halo(self, ctx):
+        # ctx.guild.default_role gets the @everyone role that all members have by default
+        await ctx.channel.set_permissions(ctx.guild.default_role, read_messages = True, send_messages = False) # Mutes channel
+
+        # Deletes ALL messages in channel
+        channel = ctx.message.channel
+        async for message in channel.history():
+            await message.delete()
+        
+        await ctx.channel.set_permissions(ctx.guild.default_role, send_messages = True)
+        
+    @commands.command(pass_context = True)
+    @commands.has_permissions(manage_guild=True)
+    async def unhalo(self, ctx):
+        await ctx.channel.set_permissions(ctx.guild.default_role, send_messages = True)
+
+
 def setup(bot):
     bot.add_cog(NukeCog(bot))
-

@@ -52,7 +52,6 @@ initial_extensions = [
     #'cogs.misc'
     'cogs.nuke'
 ]
-
 client = commands.Bot(command_prefix = determine_prefix, description="Gunrock the Bot!")
 
 if __name__ == '__main__':
