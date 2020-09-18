@@ -11,28 +11,33 @@ class NukeCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+
     @commands.command(pass_context = True) # Must do pass_context = True for code to work
-    @commands.has_permissions(manage_guild=True)
-    async def nuke(self, ctx):
+    #@commands.has_permissions(manage_guild=True)
+    @commands.has_any_role("Admin", "Classified")
+    async def nuke(self, ctx, num):
+        
         channel = ctx.message.channel
         messages = []
 
-        # Gets messages and adds them to list
-        async for message in channel.history(limit = 100):
-            messages.append(message)
-
         # Doomsday countdown message
-        for count in range(0,6):
+        for count in range(0,5):
             embed = discord.Embed(title="DOOMSDAY COUNTDOWN", description=str("Nuking commences in " + str(5 - count) + "..."), color=0xd11313)
             await ctx.send(embed = embed)
             await asyncio.sleep(1)
 
         embed = discord.Embed(title="GOODBYE", description=str("IT'S BEEN FUN"), color=0xd11313)
         await ctx.send(embed = embed)
-        await channel.delete_messages(messages) # Deletes all messages in list
 
+        # Gets messages and adds them to list
+        num = int(num)
+        async for message in channel.history(limit = num):
+            messages.append(message)
+
+        await channel.delete_messages(messages) # Deletes all messages in list
+       
     @commands.command(pass_context = True) # Must do pass_context = True for code to work
-    @commands.has_permissions(manage_guild=True)
+    @commands.has_any_role("Admin", "Classified")
     # Deletes EVERY SINGLE message in a channel one by one and sets the channel to read only while doing so
     async def halo(self, ctx):
         # ctx.guild.default_role gets the @everyone role that all members have by default
@@ -40,9 +45,19 @@ class NukeCog(commands.Cog):
 
         # Deletes ALL messages in channel
         channel = ctx.message.channel
-        async for message in channel.history():
-            await message.delete()
+        messages = []
+        async for message in channel.history(limit = 5000):
+            messages.append(message)
+            #await message.delete()
+
+        embed = discord.Embed(title="INITIATING HALO PROTOCOL", description=str("MASS DELETING MESSAGES"), color=0xd11313)
+        i = 0
+        while len(messages) != 0:
+            await messages[i].delete()
+            i += 1
         
+        print(str(i))
+        print("Messages deleted")
         await ctx.channel.set_permissions(ctx.guild.default_role, send_messages = True)
         
     @commands.command(pass_context = True)
