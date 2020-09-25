@@ -1,4 +1,3 @@
 discord
-discord.ext
 discord.utils
 discord.ext.commands
