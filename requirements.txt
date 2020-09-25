@@ -1,3 +1,2 @@
-discord
-discord.utils
-discord.ext.commands
+discord-ext-menus==1.0.0a26+g84caae8
+discord.py==1.4.1
