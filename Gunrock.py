@@ -11,6 +11,7 @@ import datetime
 import csv
 import sys
 import math
+import os
 
 # initializes the prefixes dictionary
 prefixes = {}
@@ -154,4 +155,7 @@ async def cog_load(ctx, *, cog: str):
     else:
         await ctx.send('**`SUCCESS`**')
 
-client.run(sys.argv[1])
+#client.run(sys.argv[1])
+
+# For deployment using heroku
+clinet.run(os.environ['bot_token'])

