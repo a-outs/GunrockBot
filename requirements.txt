@@ -1,2 +1,6 @@
+<<<<<<< HEAD
 discord
 
+=======
+discord
+>>>>>>> parent of 75de866... Used pipreqs to setup requirements
