@@ -1,10 +1,2 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-discord
-
-=======
-discord
->>>>>>> parent of 75de866... Used pipreqs to setup requirements
-=======
-discord
->>>>>>> parent of 75de866... Used pipreqs to setup requirements
+discord.py==1.4.1
+discord==1.0.1

@@ -1,14 +1,9 @@
 import discord
-#from discord.ext import menus
-import discord.ext.menus
-#from discord.ext import commands
-import discord.ext.commands
+from discord.ext import menus
+from discord.ext import commands
 from discord.utils import get
-#import discord.utils.get
-#from discord.ext.commands import Bot
-import discord.ext.commands.Bot
+from discord.ext.commands import Bot
 from discord.ext.commands import has_permissions
-#import discord.ext.commands.has_permissions
 import operator
 import random
 import pickle
@@ -160,7 +155,7 @@ async def cog_load(ctx, *, cog: str):
     else:
         await ctx.send('**`SUCCESS`**')
 
-client.run(sys.argv[1])
+#client.run(sys.argv[1])
 
 # For deployment using heroku
-#client.run(os.environ['bot_token'])
+client.run(os.environ['bot_token'])
