@@ -1,7 +1,1 @@
 discord
-operator
-random
-datetime
-csv
-sys
-math
