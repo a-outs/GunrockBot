@@ -1,5 +1,4 @@
 discord
-pickle
 operator
 random
 datetime
