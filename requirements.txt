@@ -1,2 +1,2 @@
 discord-ext-menus
-discord.py
+discord
