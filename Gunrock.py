@@ -1,9 +1,14 @@
 import discord
-from discord.ext import menus
-from discord.ext import commands
+#from discord.ext import menus
+import discord.ext.menus
+#from discord.ext import commands
+import discord.ext.commands
 from discord.utils import get
-from discord.ext.commands import Bot
+#import discord.utils.get
+#from discord.ext.commands import Bot
+import discord.ext.commands.Bot
 from discord.ext.commands import has_permissions
+#import discord.ext.commands.has_permissions
 import operator
 import random
 import pickle
