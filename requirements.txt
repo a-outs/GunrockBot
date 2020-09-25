@@ -1,4 +1,2 @@
 discord
-discord.ext.commands.Bot
-discord.ext.commands
-discord.ext.menus
+
