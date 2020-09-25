@@ -1,4 +1,4 @@
 discord
-menus
-commands
-bot
+discord.ext
+discord.utils
+discord.ext.commands
