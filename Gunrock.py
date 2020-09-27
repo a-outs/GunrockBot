@@ -1,6 +1,6 @@
 import discord
-#from discord.ext import menus
-#from discord.ext import commands
+from discord.ext import menus
+from discord.ext import commands
 from discord.utils import get
 from discord.ext.commands import Bot
 from discord.ext.commands import has_permissions
