@@ -155,7 +155,7 @@ async def cog_load(ctx, *, cog: str):
     else:
         await ctx.send('**`SUCCESS`**')
 
-client.run(sys.argv[1])
+#client.run(sys.argv[1])
 
 # For deployment using herokus
-#client.run(os.environ['bot_token'])
+client.run(os.environ['bot_token'])
