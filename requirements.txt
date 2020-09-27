@@ -1,2 +1,1 @@
-discord-ext-menus
-discord.py==1.4.1
+discord
