@@ -63,8 +63,8 @@ if __name__ == '__main__':
 # when the bot's ready
 @client.event
 async def on_ready():
-    print('ready')
     print_onready_ascii_art()
+    print('ready')
 
 def print_onready_ascii_art():
     ascii_art = """ 
