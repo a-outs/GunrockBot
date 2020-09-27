@@ -64,6 +64,19 @@ if __name__ == '__main__':
 @client.event
 async def on_ready():
     print('ready')
+    print_onready_ascii_art()
+
+def print_onready_ascii_art():
+    ascii_art = """ 
+   ______                            __  
+  / ____/_  ______  _________  _____/ /__
+ / / __/ / / / __ \/ ___/ __ \/ ___/ //_/
+/ /_/ / /_/ / / / / /  / /_/ / /__/ ,<   
+\____/\__,_/_/ /_/_/   \____/\___/_/|_|  
+
+    """
+
+    print(ascii_art)
 
 # on error
 @client.event
