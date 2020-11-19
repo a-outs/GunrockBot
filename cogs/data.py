@@ -85,8 +85,7 @@ def get_CRN_data(course_code, term_code):
     else:
         for key, value in crn_data_dict.items():
             embed.add_field(name=key, value=value, inline=False)
-        embed.set_footer(text="Run the command course " + course_code.upper() + " to see overall data about this course")
-        embed.set_footer(text="For automatic schedule building, visit: https://timstewartj.github.io/UCDScheduleBuilder/")
+        embed.set_footer(text="Run the command course " + course_code.upper() + " to see overall data about this course\n For automatic schedule building, visit: https://timstewartj.github.io/UCDScheduleBuilder/")
     return embed
 
 def setup(bot):
