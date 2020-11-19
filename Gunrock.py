@@ -63,7 +63,20 @@ if __name__ == '__main__':
 # when the bot's ready
 @client.event
 async def on_ready():
+    print_onready_ascii_art()
     print('ready')
+
+def print_onready_ascii_art():
+    ascii_art = """ 
+   ______                            __  
+  / ____/_  ______  _________  _____/ /__
+ / / __/ / / / __ \/ ___/ __ \/ ___/ //_/
+/ /_/ / /_/ / / / / /  / /_/ / /__/ ,<   
+\____/\__,_/_/ /_/_/   \____/\___/_/|_|  
+
+    """
+
+    print(ascii_art)
 
 # on error
 @client.event
@@ -157,5 +170,5 @@ async def cog_load(ctx, *, cog: str):
 
 #client.run(sys.argv[1])
 
-# For deployment using herokus
+# For deployment using heroku
 client.run(os.environ['bot_token'])
