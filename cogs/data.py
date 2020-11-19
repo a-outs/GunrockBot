@@ -52,7 +52,7 @@ def get_course_data(course_code):
                         if x != 13:
                             field_data += "| "
                 embed.add_field(name=field_name, value=field_data, inline=True)
-                embed.set_footer(text="Run the command crn " + course_code.upper() + " to see data about this course's CRNs")
+                embed.set_footer(text="Run the command crn " + course_code.upper() + " to see data about this course's CRNs\n For automatic schedule building, visit: https://timstewartj.github.io/UCDScheduleBuilder/")
                 return embed
         embed = discord.Embed(title="Course Not Found!", description="I couldn't find that course! In your requested course code, make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there.", color=0xd11313)
         return embed
@@ -85,7 +85,7 @@ def get_CRN_data(course_code, term_code):
     else:
         for key, value in crn_data_dict.items():
             embed.add_field(name=key, value=value, inline=False)
-        embed.set_footer(text="Run the command course " + course_code.upper() + " to see overall data about this cour\n For automatic schedule building, visit: https://timstewartj.github.io/UCDScheduleBuilder/")
+        embed.set_footer(text="Run the command course " + course_code.upper() + " to see overall data about this course")
     return embed
 
 def setup(bot):
