@@ -170,5 +170,5 @@ async def cog_load(ctx, *, cog: str):
 
 #client.run(sys.argv[1])
 
-# For deployment using herokus
+# For deployment using heroku
 client.run(os.environ['bot_token'])
