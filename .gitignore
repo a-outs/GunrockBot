@@ -7,3 +7,6 @@
 
 #ignores vs code files
 .vs/
+
+*.DS_Store
+.swp
