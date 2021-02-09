@@ -1,36 +1,58 @@
 # GUNROCK BOT
 The best bot around for UC Davis Discord Servers
 
-## FEATURES
-
-While we work on some updates, the only features currently enabled for the bot are course and crn data retrieval.
+[**INVITE LINK**](https://discord.com/oauth2/authorize?client_id=726048467063013376&scope=bot)
 
 ## COMMANDS
 
 ### General Commands
 
-help - run this to get a list of commands
+`help`
+For help
 
-### Course and CRN Commands
+### Course and CRN Commands (`data`)
 
-(prefix)course [course code]: Gives you the full course name and description. Make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there.
+`course [course code]`
+Gives you the full course name and description, including GE's fulfilled and prerequisites.
 
-(prefix)crn [course code]: Gives you the CRN data of a singular course. Again, make sure zeros are there.
+`crn [course code]`
+Gives you the CRN data of a course for the current quarter.
 
-### Admin Only Commands
+### Meme Commands (`memes`)
 
-rolemessagesetup - use this to set up the reaction roles message, the emojis, and their respective roles. Requires the manage guild permission  
-(prefix)rolemessagesetup [reaction role message content],[emojis in their respective order, seperated by %],[role names, seperated by %]  
-  
-rolesetup - run this command to send the official message that users would react to to recieve their roles. Requires the manage guild permission  
-(prefix)rolesetup  
-  
-setprefix - use this to set the bot prefix  
-(prefix)setprefix [newprefix]  
+`boomer @user`
+Calls out a user for being a boomer
+
+`dab @user`
+Dabs on dem haters
+
+`cow @user`
+Tells you how much of a true Aggie they are
+
+`bad @user`
+Calls them out for being bad
+
+`simp @user`
+Rates how much of a simp they are
+
+### Admin Only Commands (requires manage_guild permission)
+
+`setprefix [newprefix]`
+use this to set the bot prefix
+
+`mod [mod name]`
+enables or disables the specified module
+
+`listmods`
+lists all mods and whether or not they are enabled or disabled
 
 ## CHANGELOG
 
 ### GUNROCK 1.5
+
+- Commands are now modular and can be enabled/disabled per-server.
+
+### GUNROCK 1.4.1
 
 - Disabled everything except course and crn data retrieval while updates are being worked on.
 

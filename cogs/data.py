@@ -11,22 +11,28 @@ import datetime
 import csv
 import sys
 import math
+import re
+from modloader import modcheck
 
 #
 # DATA COMMANDS
 #
+
+mod = 'data'
 
 class DataCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command(name='course', aliases=['getcourse'])
+    @modcheck(mod)
     async def getcourse(self, ctx, course_prefix, course_suffix):
-        await ctx.send(embed = get_course_data(course_prefix + " " + course_suffix))
+        await ctx.send(embed = get_course_data(course_prefix + " " + course_suffix.zfill(len(course_suffix) + (3 - len(re.sub("\D", "", course_suffix))))))
 
     @commands.command(name='crn', aliases=['getCRNs', 'getcrns', 'crns', 'CRN', 'CRNs'])
+    @modcheck(mod)
     async def getCRNdata(self, ctx, course_prefix, course_suffix):
-        await ctx.send(embed = get_CRN_data(course_prefix + " " + course_suffix, 202010))
+        await ctx.send(embed = get_CRN_data(course_prefix + " " + course_suffix.zfill(len(course_suffix) + (3 - len(re.sub("\D", "", course_suffix)))), 202103))
 
 def get_course_data(course_code):
     with open("data/20202021GenCat.txt", "r", encoding='utf8') as csv_file:
@@ -35,8 +41,8 @@ def get_course_data(course_code):
         for row in csv_reader:
             if(len(header) == 0):
                 header = row
-            if(row[0].find(course_code.upper()) == 0):
-                embed = discord.Embed(title=course_code.upper() + " - " + row[1], description=row[14], color=0xffbf00)
+            if(row[0] == course_code.upper()):
+                embed = discord.Embed(title=row[0] + " - " + row[1], description=row[14], color=0xffbf00)
                 field_name = "Credits: " + row[2]
                 field_data = ""
                 for x in range(3, 14):
@@ -52,9 +58,9 @@ def get_course_data(course_code):
                         if x != 13:
                             field_data += "| "
                 embed.add_field(name=field_name, value=field_data, inline=True)
-                embed.set_footer(text="Run the command crn " + course_code.upper() + " to see data about this course's CRNs")
+                embed.set_footer(text="Run the command crn " + row[0] + " to see data about this course's CRNs")
                 return embed
-        embed = discord.Embed(title="Course Not Found!", description="I couldn't find that course! In your requested course code, make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there.", color=0xd11313)
+        embed = discord.Embed(title="Course Not Found!", description="I couldn't find that course!", color=0xd11313)
         return embed
 
 def get_CRN_data(course_code, term_code):
@@ -81,7 +87,7 @@ def get_CRN_data(course_code, term_code):
                 except KeyError:
                     crn_data_dict[row[0]] = value_string
     if classes_found == 0:
-        embed.add_field(name="Error!", value="Class not found! Don't forget to include zero's if the course code has them.")
+        embed.add_field(name="Error!", value="Class not found!")
     else:
         for key, value in crn_data_dict.items():
             embed.add_field(name=key, value=value, inline=False)

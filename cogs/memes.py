@@ -11,16 +11,20 @@ import datetime
 import csv
 import sys
 import math
+from modloader import modcheck
 
 #
 # MEME COMMANDS
 #
+
+mod = 'memes'
 
 class MemesCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
+    @modcheck(mod)
     async def boomer(self, ctx, member : discord.Member):
         member_id = member.id
         member_id = str(member_id)
@@ -28,6 +32,7 @@ class MemesCog(commands.Cog):
         await ctx.send(member_as_mention + " okay boomer")
 
     @commands.command()
+    @modcheck(mod)
     async def dab(self, ctx, member : discord.Member):
         member_id = member.id
         member_id = str(member_id)
@@ -35,6 +40,7 @@ class MemesCog(commands.Cog):
         await ctx.send(member_as_mention + " get dabbed on! <O/")
 
     @commands.command()
+    @modcheck(mod)
     async def cow(self, ctx, member : discord.Member):
         member_id = member.id
         member_id = str(member_id)
@@ -43,6 +49,7 @@ class MemesCog(commands.Cog):
         await ctx.send(embed = embed)
 
     @commands.command()
+    @modcheck(mod)
     async def bad(self, ctx, member : discord.Member):
         member_id = member.id
         member_id = str(member_id)
@@ -51,6 +58,7 @@ class MemesCog(commands.Cog):
         await ctx.send(embed = embed)
 
     @commands.command()
+    @modcheck(mod)
     async def simp(self, ctx, member : discord.Member):
         member_id = member.id
         member_id = str(member_id)
