@@ -1,6 +1,8 @@
 # GUNROCK BOT
 The best bot around for UC Davis Discord Servers
 
+[**INVITE LINK**](https://discord.com/oauth2/authorize?client_id=726048467063013376&scope=bot)
+
 ## FEATURES
 
 While we work on some updates, the only features currently enabled for the bot are course and crn data retrieval.
