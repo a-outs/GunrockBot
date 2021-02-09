@@ -3,8 +3,6 @@ The best bot around for UC Davis Discord Servers
 
 ## FEATURES
 
-Swearjar - Keep track of swears.
-Quotebook - Save quotes.
 Get UC Davis course data with a simple command.
 
 ## COMMANDS
@@ -13,7 +11,7 @@ Get UC Davis course data with a simple command.
 
 help - run this to get a list of commands
 
-### Swear Jar Commands
+### Swear Jar Commands (DISABLED)
 
 add - use this to add points to a user's swearjar  
 (prefix)add [@member] [points to add]  
@@ -72,5 +70,4 @@ setprefix - use this to set the bot prefix
 ## CREDITS
 
 Currently worked on by Jun and Tim.  
-Thanks to Peter for hosting the bot.  
 The Gunrock mascot and course data belong to The University of California at Davis. We do not claim ownership of either.  
