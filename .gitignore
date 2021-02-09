@@ -1,5 +1,6 @@
 #ignores the pickle files
 pickles/
+pickles/prefixes.pickle
 
 #ignores unimportant python files
 *.pyc
@@ -12,3 +13,5 @@ pickles/
 .swp
 
 venv/
+
+*token

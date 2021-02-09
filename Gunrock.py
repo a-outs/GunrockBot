@@ -21,7 +21,7 @@ modules = {}
 # admin whitelist
 admins = [372696487290863618]
 
-default_prefix = '.'
+default_prefix = '!gunrock '
 
 #a function to save new prefixes to the prefixes file
 def prefix_saving():
@@ -75,6 +75,7 @@ if __name__ == '__main__':
 # when the bot's ready
 @client.event
 async def on_ready():
+    await client.change_presence(activity=discord.Game('!gunrock help'))
     print_onready_ascii_art()
     print('ready')
 

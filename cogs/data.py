@@ -27,12 +27,70 @@ class DataCog(commands.Cog):
     @commands.command(name='course', aliases=['getcourse'])
     @modcheck(mod)
     async def getcourse(self, ctx, course_prefix, course_suffix):
-        await ctx.send(embed = get_course_data(course_prefix + " " + course_suffix.zfill(len(course_suffix) + (3 - len(re.sub("\D", "", course_suffix))))))
+        embed = get_course_data(course_prefix + " " + course_suffix.zfill(len(course_suffix) + (3 - len(re.sub("\D", "", course_suffix)))))
+        timeout = int(get_timeout(ctx.guild.id))
+        if(timeout > 0):
+            embed.set_footer(text="This message will self-destruct in " + str(timeout) + " seconds.")
+            await ctx.send(embed = embed, delete_after=timeout)
+        else:
+            await ctx.send(embed = embed)
 
     @commands.command(name='crn', aliases=['getCRNs', 'getcrns', 'crns', 'CRN', 'CRNs'])
     @modcheck(mod)
     async def getCRNdata(self, ctx, course_prefix, course_suffix):
-        await ctx.send(embed = get_CRN_data(course_prefix + " " + course_suffix.zfill(len(course_suffix) + (3 - len(re.sub("\D", "", course_suffix)))), 202103))
+        embed = get_CRN_data(course_prefix + " " + course_suffix.zfill(len(course_suffix) + (3 - len(re.sub("\D", "", course_suffix)))), 202103)
+        timeout = int(get_timeout(ctx.guild.id))
+        if(timeout > 0):
+            embed.set_footer(text="This message will self-destruct in " + str(timeout) + " seconds.")
+            await ctx.send(embed = embed, delete_after=timeout)
+        else:
+            await ctx.send(embed = embed)
+
+    @commands.command(name='set timeout', aliases=['timeout'])
+    @has_permissions(manage_guild=True)
+    @modcheck(mod)
+    async def set_timeout(self, ctx, timeout_length):
+        if(timeout_length.isnumeric()):
+            data_settings = get_settings()
+            if(not ctx.guild.id in data_settings):
+                data_settings[ctx.guild.id] = {}
+            data_settings[ctx.guild.id]['timeout'] = timeout_length
+            write_settings(data_settings)
+            await ctx.send(embed = discord.Embed(title="Timeout set!", description="Data messages will now delete themselves after " + timeout_length + " seconds"))
+        else:
+            await ctx.send(embed = discord.Embed(title="Invalid input!", description="The timeout length needs to be an integer..."))
+
+
+def init_settings(): # initializes data_settings pickle if it doesn't already exist
+    try:
+        try:
+            with open("pickles/data_settings.pickle","rb") as data_settings:
+                pickle.load(data_settings)
+        except EOFError as error:
+            with open("pickles/data_settings.pickle","wb") as file:
+                pickle.dump({}, file)
+    except FileNotFoundError as error:
+        with open("pickles/data_settings.pickle","wb") as file:
+            pickle.dump({}, file)
+
+def get_settings(): # returns the entire data settings dictionary
+    with open("pickles/data_settings.pickle","rb") as data_settings:
+        return pickle.load(data_settings)
+
+def write_settings(data_settings): # writes an entire dictionary to the data settings file
+    with open("pickles/data_settings.pickle","wb") as file:
+        pickle.dump(data_settings, file)
+
+def get_timeout(guild_id): # returns the timeout for a specified server
+    with open("pickles/data_settings.pickle","rb") as file:
+        data_settings = pickle.load(file)
+        if(not guild_id in data_settings):
+            return 0
+        else:
+            if(not 'timeout' in data_settings[guild_id]):
+                return 0
+            else:
+                return data_settings[guild_id]['timeout']
 
 def get_course_data(course_code):
     with open("data/20202021GenCat.txt", "r", encoding='utf8') as csv_file:
@@ -96,4 +154,5 @@ def get_CRN_data(course_code, term_code):
     return embed
 
 def setup(bot):
+    init_settings()
     bot.add_cog(DataCog(bot))
