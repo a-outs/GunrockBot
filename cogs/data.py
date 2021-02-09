@@ -61,8 +61,7 @@ class DataCog(commands.Cog):
             await ctx.send(embed = discord.Embed(title="Invalid input!", description="The timeout length needs to be an integer..."))
 
 
-def init_settings():
-    #open("pickles/data_settings.pickle","wb")
+def init_settings(): # initializes data_settings pickle if it doesn't already exist
     try:
         try:
             with open("pickles/data_settings.pickle","rb") as data_settings:
@@ -74,15 +73,15 @@ def init_settings():
         with open("pickles/data_settings.pickle","wb") as file:
             pickle.dump({}, file)
 
-def get_settings():
+def get_settings(): # returns the entire data settings dictionary
     with open("pickles/data_settings.pickle","rb") as data_settings:
         return pickle.load(data_settings)
 
-def write_settings(data_settings):
+def write_settings(data_settings): # writes an entire dictionary to the data settings file
     with open("pickles/data_settings.pickle","wb") as file:
         pickle.dump(data_settings, file)
 
-def get_timeout(guild_id):
+def get_timeout(guild_id): # returns the timeout for a specified server
     with open("pickles/data_settings.pickle","rb") as file:
         data_settings = pickle.load(file)
         if(not guild_id in data_settings):
