@@ -69,5 +69,4 @@ setprefix - use this to set the bot prefix
 ## CREDITS
 
 Currently worked on by Jun and Tim.  
-Thanks to Peter for hosting the bot.  
 The Gunrock mascot and course data belong to The University of California at Davis. We do not claim ownership of either.  
