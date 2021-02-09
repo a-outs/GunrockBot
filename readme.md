@@ -46,11 +46,16 @@ enables or disables the specified module
 `listmods`
 lists all mods and whether or not they are enabled or disabled
 
+`timeout [timeout length]`
+Messages sent from commands in the `data` category will self desctruct after `timeout length` seconds. Input must be an integer.
+Set to 0 to disable timeout.
+
 ## CHANGELOG
 
-### GUNROCK 1.5
+### GUNROCK 1.5.1
 
 - Commands are now modular and can be enabled/disabled per-server.
+- Added ability to set timeout for data commands.
 
 ### GUNROCK 1.4.1
 
