@@ -45,9 +45,9 @@ async def determine_prefix(bot, message):
         return default_prefix
 
 initial_extensions = [
-    'cogs.reactroles',
+    #'cogs.reactroles',
     # 'cogs.swearjar',
-    'cogs.quotebook',
+    #'cogs.quotebook',
     'cogs.memes',
     'cogs.data',
     #'cogs.misc'
@@ -87,16 +87,16 @@ async def on_command_error(ctx, error):
 # when a member joins
 @client.event
 async def on_member_join(member):
-    channel = discord.utils.get(member.guild.channels, name = "👋welcome")
-    role = get(member.guild.roles, name = "Aggie")
-    await member.add_roles(role)
-    await channel.send(f"Fellow Aggie {member.mention} has joined! Go pick a role in #roles and introduce yourself in #introductions! Please join us in the voice chats as well!")
-    print(f'Fellow Aggie {member} has joined!')
+    #channel = discord.utils.get(member.guild.channels, name = "👋welcome")
+    #role = get(member.guild.roles, name = "Aggie")
+    #await member.add_roles(role)
+    #await channel.send(f"Fellow Aggie {member.mention} has joined! Go pick a role in #roles and introduce yourself in #introductions! Please join us in the voice chats as well!")
+    #print(f'Fellow Aggie {member} has joined!')
 
 # when a member leaves
 @client.event
 async def on_member_remove(member):
-    print(f'{member} yeeted away from the server.')
+    #print(f'{member} yeeted away from the server.')
 
 #
 # HELP COMMAND
@@ -116,15 +116,17 @@ async def help(ctx):
     #instructions += prefix + "add @user [number]: Adds [number] points to the mentioned user's swear jar. \n\n"
     #instructions += prefix + "remove @user [nummber]: Removes [number] points from the mentioned user's swear jar. \n\n"
     #instructions += prefix + "leaderboard: Shows the top 5 in the swear jar. \n\n"
-    instructions += prefix + "addquote @user [quote]: Add a quote to the mentioned user's quotebook. \n\n"
-    instructions += prefix + "quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
-    instructions += prefix + "listquotes @user: Lists all of the mentioned user's quotes. \n\n"
-    instructions += prefix + "removequote @user [quote number]: Removes the designated quote from the mentioned user's quote book. \n\n"
-    instructions += prefix + "editquote @user [quote number] [new quote]: Overwrites the user's quote at [number] with [new quote]. \n\n"
+    #instructions += prefix + "addquote @user [quote]: Add a quote to the mentioned user's quotebook. \n\n"
+    #instructions += prefix + "quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
+    #instructions += prefix + "listquotes @user: Lists all of the mentioned user's quotes. \n\n"
+    #instructions += prefix + "removequote @user [quote number]: Removes the designated quote from the mentioned user's quote book. \n\n"
+    #instructions += prefix + "editquote @user [quote number] [new quote]: Overwrites the user's quote at [number] with [new quote]. \n\n"
     instructions += prefix + "course [course code]: Gives you the full course name and description. Make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there. Ex: " + prefix + "getcourse DRA 001 \n\n"
     instructions += prefix + "crn [course code]: Gives you the CRN data of a singular course. Make sure to put in zeros! For example, to get data about DRA 001, make sure those two 0's are there. Ex: " + prefix + "getcourse DRA 001 "
 
     embed = discord.Embed(title="Commands:", description=instructions, color=0xffbf00)
+
+    embed.set_footer(text="Contact timmie#6383 or Moragoh#7628 for help, questions, comments, or concerns.")
 
     await ctx.send(embed = embed)
 
