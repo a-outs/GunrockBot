@@ -126,6 +126,8 @@ async def help(ctx):
 
     embed = discord.Embed(title="Commands:", description=instructions, color=0xffbf00)
 
+    embed.set_footer(text="Contact timmie#6383 or Moragoh#7628 for help, questions, comments, or concerns.")
+
     await ctx.send(embed = embed)
 
 # set prefix command
