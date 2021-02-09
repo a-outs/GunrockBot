@@ -13,10 +13,10 @@ For help
 ### Course and CRN Commands (`data`)
 
 `course [course code]`
-course - Gives you the full course name and description, including GE's fulfilled and prerequisites.
+Gives you the full course name and description, including GE's fulfilled and prerequisites.
 
 `crn [course code]`
-crn - Gives you the CRN data of a course for the current quarter.
+Gives you the CRN data of a course for the current quarter.
 
 ### Meme Commands (`memes`)
 
@@ -44,7 +44,7 @@ use this to set the bot prefix
 enables or disables the specified module
 
 `listmods`
-lists alls mods and whether or not they are enabled or disabled
+lists all mods and whether or not they are enabled or disabled
 
 ## CHANGELOG
 
