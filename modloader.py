@@ -20,6 +20,7 @@ def save_mods(modules):
 
 def modcheck(mod_name):
     async def predicate(ctx):
+        if(not ctx.guild): return True
         pickle_in = open("pickles/modules.pickle", "rb")
         modules = pickle.load(pickle_in)
         pickle_in.close()

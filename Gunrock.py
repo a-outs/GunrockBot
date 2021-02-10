@@ -128,7 +128,7 @@ async def help(ctx):
     instructions = ''
     embed = discord.Embed(title="Commands:", description=instructions, color=0xffbf00)
 
-    if(modloader.is_enabled('memes', ctx.guild.id)):
+    if(not guild or modloader.is_enabled('memes', ctx.guild.id)):
         tempvalue = ''
         tempvalue += prefix + "boomer @user\nCalls out a user for being a boomer\n\n"
         tempvalue += prefix + "dab @user\nDabs on dem haters\n\n"
@@ -137,7 +137,7 @@ async def help(ctx):
         tempvalue += prefix + "simp @user\nRates how much of a simp they are"
         embed.add_field(name="Memes:", value=tempvalue)
 
-    if(modloader.is_enabled('data', ctx.guild.id)):
+    if(not guild or modloader.is_enabled('data', ctx.guild.id)):
         tempvalue = ''
         tempvalue += prefix + "course [course code]\nGives you the full course name and description.\n\n"
         tempvalue += prefix + "crn [course code]\nGives you the CRN data of a course."
@@ -254,4 +254,4 @@ async def cog_unload(ctx, *, cog: str):
     else:
         await ctx.send("You don't have permissions for that!")
 
-client.run(sys.argv[1])
+client.run(open('tokens/discord.token', 'r').read())
