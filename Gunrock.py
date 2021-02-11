@@ -96,16 +96,6 @@ async def on_command_error(ctx, error):
     embed = discord.Embed(title="Error!", description=str(error), color=0xd11313)
     await ctx.send(embed = embed)
 
-# when a member joins
-@client.event
-async def on_member_join(member):
-    guild = client.get_guild(699817949883662428)
-    if guild.id == 699817949883662428:
-        channel = discord.utils.get(member.guild.channels, name = "👋welcome")
-        role = get(member.guild.roles, name = "Aggie")
-        await member.add_roles(role)
-        await channel.send(f"Fellow Aggie {member.mention} has joined! Go pick a role in #roles and introduce yourself in #introductions! Please join us in the voice chats as well!")
-
 #
 # HELP COMMAND
 #
@@ -131,6 +121,7 @@ async def help(ctx):
         tempvalue += prefix + "dab @user\nDabs on dem haters\n\n"
         tempvalue += prefix + "cow @user\nTells you how much of a true Aggie they are\n\n"
         tempvalue += prefix + "bad @user\nCalls them out for being bad\n\n"
+        tempvalue += prefix + "hydrate @user\nTells them to hydrate\n\n"
         tempvalue += prefix + "simp @user\nRates how much of a simp they are"
         embed.add_field(name="Memes:", value=tempvalue)
 

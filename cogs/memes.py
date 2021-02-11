@@ -69,6 +69,14 @@ class MemesCog(commands.Cog):
 
     @commands.command()
     @modcheck(mod)
+    async def hydrate(self, ctx, member : discord.Member):
+        member_id = member.id
+        member_id = str(member_id)
+        member_as_mention = "<@" + member_id + ">"
+        await ctx.send("Remeber to hydrate " + member_as_mention + "!")
+
+    @commands.command()
+    @modcheck(mod)
     async def cheeto(self, ctx):
         await ctx.send(grab_cheeto())
 

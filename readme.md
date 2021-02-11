@@ -38,6 +38,9 @@ Calls them out for being bad
 `simp @user`
 Rates how much of a simp they are
 
+`hydrate @user`
+Tells them to hydrate
+
 ### Admin Only Commands (requires manage roles permission)
 
 `setprefix [newprefix]`
@@ -57,7 +60,7 @@ Set to 0 to disable timeout.
 
 ### GUNROCK 1.5.3
 
-- Added cheeto command
+- Added cheeto and hydrate commands
 - `crn` will now give up-to-date information on seats available whenever possible.
 - Commands are now modular and can be enabled/disabled per-server.
 - Added ability to set timeout for data commands.
