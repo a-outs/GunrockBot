@@ -4,6 +4,7 @@ from discord.ext import commands
 from discord.utils import get
 from discord.ext.commands import Bot
 from discord.ext.commands import has_permissions
+from discord_webhook import DiscordWebhook
 import operator
 import random
 import pickle
@@ -12,6 +13,8 @@ import csv
 import sys
 import math
 import re
+import json
+import requests
 from modloader import modcheck
 
 #
@@ -20,6 +23,8 @@ from modloader import modcheck
 
 mod = 'data'
 
+current_term = 202103
+
 class DataCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -27,24 +32,16 @@ class DataCog(commands.Cog):
     @commands.command(name='course', aliases=['getcourse'])
     @modcheck(mod)
     async def getcourse(self, ctx, course_prefix, course_suffix):
-        embed = get_course_data(course_prefix + " " + course_suffix.zfill(len(course_suffix) + (3 - len(re.sub("\D", "", course_suffix)))))
-        timeout = int(get_timeout(ctx.guild.id))
-        if(timeout > 0):
-            embed.set_footer(text="This message will self-destruct in " + str(timeout) + " seconds.")
-            await ctx.send(embed = embed, delete_after=timeout)
-        else:
-            await ctx.send(embed = embed)
+        message = await ctx.send("Getting data, please wait...")
+        embed = get_course_data(parse_course_code(course_prefix, course_suffix))
+        await timeout_logic(embed, ctx, message)
 
     @commands.command(name='crn', aliases=['getCRNs', 'getcrns', 'crns', 'CRN', 'CRNs'])
     @modcheck(mod)
-    async def getCRNdata(self, ctx, course_prefix, course_suffix):
-        embed = get_CRN_data(course_prefix + " " + course_suffix.zfill(len(course_suffix) + (3 - len(re.sub("\D", "", course_suffix)))), 202103)
-        timeout = int(get_timeout(ctx.guild.id))
-        if(timeout > 0):
-            embed.set_footer(text="This message will self-destruct in " + str(timeout) + " seconds.")
-            await ctx.send(embed = embed, delete_after=timeout)
-        else:
-            await ctx.send(embed = embed)
+    async def crn(self, ctx, course_prefix, course_suffix):
+        message = await ctx.send("Getting data, please wait...")
+        embed = fetch_CRN_data(parse_course_code(course_prefix, course_suffix))
+        await timeout_logic(embed, ctx, message)
 
     @commands.command(name='set timeout', aliases=['timeout'])
     @has_permissions(manage_guild=True)
@@ -56,12 +53,14 @@ class DataCog(commands.Cog):
                 data_settings[ctx.guild.id] = {}
             data_settings[ctx.guild.id]['timeout'] = timeout_length
             write_settings(data_settings)
-            await ctx.send(embed = discord.Embed(title="Timeout set!", description="Data messages will now delete themselves after " + timeout_length + " seconds"))
+            desc_string = "Data messages will now delete themselves after " + timeout_length + " seconds"
+            if(int(timeout_length) == 0): desc_string = "Data messages will now never delete themselves"
+            await ctx.send(embed = discord.Embed(title="Timeout set!", description=desc_string))
         else:
             await ctx.send(embed = discord.Embed(title="Invalid input!", description="The timeout length needs to be an integer..."))
 
-
-def init_settings(): # initializes data_settings pickle if it doesn't already exist
+# initializes data_settings pickle if it doesn't already exist
+def init_settings(): 
     try:
         try:
             with open("pickles/data_settings.pickle","rb") as data_settings:
@@ -73,15 +72,18 @@ def init_settings(): # initializes data_settings pickle if it doesn't already ex
         with open("pickles/data_settings.pickle","wb") as file:
             pickle.dump({}, file)
 
-def get_settings(): # returns the entire data settings dictionary
+# returns the entire data settings dictionary
+def get_settings(): 
     with open("pickles/data_settings.pickle","rb") as data_settings:
         return pickle.load(data_settings)
 
-def write_settings(data_settings): # writes an entire dictionary to the data settings file
+# writes an entire dictionary to the data settings file
+def write_settings(data_settings): 
     with open("pickles/data_settings.pickle","wb") as file:
         pickle.dump(data_settings, file)
 
-def get_timeout(guild_id): # returns the timeout for a specified server
+# returns the timeout for a specified server
+def get_timeout(guild_id): 
     with open("pickles/data_settings.pickle","rb") as file:
         data_settings = pickle.load(file)
         if(not guild_id in data_settings):
@@ -91,6 +93,18 @@ def get_timeout(guild_id): # returns the timeout for a specified server
                 return 0
             else:
                 return data_settings[guild_id]['timeout']
+
+def parse_course_code(course_prefix, course_suffix):
+    return course_prefix + " " + course_suffix.zfill(len(course_suffix) + (3 - len(re.sub("\D", "", course_suffix))))
+
+async def timeout_logic(embed, ctx, message):
+    timeout = 0
+    if(ctx.guild): timeout = int(get_timeout(ctx.guild.id))
+    if(timeout > 0):
+        embed.set_footer(text="This message will self-destruct in " + str(timeout) + " seconds.")
+        await message.edit(content="", embed = embed, delete_after=timeout)
+    else:
+        await message.edit(content="", embed = embed)
 
 def get_course_data(course_code):
     with open("data/20202021GenCat.txt", "r", encoding='utf8') as csv_file:
@@ -149,8 +163,29 @@ def get_CRN_data(course_code, term_code):
     else:
         for key, value in crn_data_dict.items():
             embed.add_field(name=key, value=value, inline=False)
-        embed.set_footer(text="Run the command course " + course_code.upper() + " to see overall data about this course")
-        embed.set_footer(text="For automatic schedule building, visit: https://timstewartj.github.io/UCDScheduleBuilder/")
+    return embed
+
+def fetch_CRN_data(course_code):
+    embed = discord.Embed(title="CRN Data for " + course_code.upper(), color=0xffbf00)
+    discipline = course_code.upper().split(' ')[0]
+    number = course_code.upper().split(' ')[1]
+    hed = {'Authorization': 'Bearer ' + open("tokens/bearer.token", "r").read()}
+    courseJson = requests.get("https://mydegree.ucdavis.edu/responsiveDashboard/api/course-link?discipline=" + discipline + "&number=" + number + "&", headers=hed).json()
+    if("error" in courseJson): #if the api request fails, fall back to the old function and send a ping to tim to fix
+        DiscordWebhook(url='https://discord.com/api/webhooks/796594761742024705/3yLjjHvru14K-ughlwjAZhE5P5vPo_leDeKIvjN9PEybFrIuXb3Vrpxcvs2mdM_LvgDL', content='<@372696487290863618> The bearer token has expired, please fix!').execute()
+        return get_CRN_data(course_code, current_term)
+
+    if("error" in courseJson["courseInformation"]): #if the course isn't found
+        embed.add_field(name="Error!", value="Class not found!")
+        return embed
+
+    for section in courseJson["courseInformation"]["courses"][0]["sections"]:
+        value_string = "Term: " + section["termLiteral"]
+        value_string += "\nSeats left: " + section["seatsAvailable"]
+        for meeting in section["meetings"]:
+            value_string += "\n" + meeting["monday"] + meeting["tuesday"] + meeting["wednesday"] + meeting["thursday"] + meeting["friday"] + " " + meeting["beginTime"] + "-" + meeting["endTime"]
+        embed.add_field(name=section["courseReferenceNumber"], value=value_string, inline=False)
+
     return embed
 
 def setup(bot):

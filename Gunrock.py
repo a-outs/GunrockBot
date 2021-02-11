@@ -97,18 +97,14 @@ async def on_command_error(ctx, error):
     await ctx.send(embed = embed)
 
 # when a member joins
-#@client.event
-#async def on_member_join(member):
-    #channel = discord.utils.get(member.guild.channels, name = "👋welcome")
-    #role = get(member.guild.roles, name = "Aggie")
-    #await member.add_roles(role)
-    #await channel.send(f"Fellow Aggie {member.mention} has joined! Go pick a role in #roles and introduce yourself in #introductions! Please join us in the voice chats as well!")
-    #print(f'Fellow Aggie {member} has joined!')
-
-# when a member leaves
-#@client.event
-#async def on_member_remove(member):
-    #print(f'{member} yeeted away from the server.')
+@client.event
+async def on_member_join(member):
+    guild = client.get_guild(699817949883662428)
+    if guild.id == 699817949883662428:
+        channel = discord.utils.get(member.guild.channels, name = "👋welcome")
+        role = get(member.guild.roles, name = "Aggie")
+        await member.add_roles(role)
+        await channel.send(f"Fellow Aggie {member.mention} has joined! Go pick a role in #roles and introduce yourself in #introductions! Please join us in the voice chats as well!")
 
 #
 # HELP COMMAND
@@ -130,6 +126,7 @@ async def help(ctx):
 
     if(not guild or modloader.is_enabled('memes', ctx.guild.id)):
         tempvalue = ''
+        tempvalue += prefix + "cheeto\nSends a random picture of cheeto\n\n"
         tempvalue += prefix + "boomer @user\nCalls out a user for being a boomer\n\n"
         tempvalue += prefix + "dab @user\nDabs on dem haters\n\n"
         tempvalue += prefix + "cow @user\nTells you how much of a true Aggie they are\n\n"
@@ -142,15 +139,6 @@ async def help(ctx):
         tempvalue += prefix + "course [course code]\nGives you the full course name and description.\n\n"
         tempvalue += prefix + "crn [course code]\nGives you the CRN data of a course."
         embed.add_field(name="Course Data:", value=tempvalue)
-
-    #instructions += prefix + "add @user [number]: Adds [number] points to the mentioned user's swear jar. \n\n"
-    #instructions += prefix + "remove @user [nummber]: Removes [number] points from the mentioned user's swear jar. \n\n"
-    #instructions += prefix + "leaderboard: Shows the top 5 in the swear jar. \n\n"
-    #instructions += prefix + "addquote @user [quote]: Add a quote to the mentioned user's quotebook. \n\n"
-    #instructions += prefix + "quote @user: Outputs the random quote from the mentioned user's quotenook. \n\n"
-    #instructions += prefix + "listquotes @user: Lists all of the mentioned user's quotes. \n\n"
-    #instructions += prefix + "removequote @user [quote number]: Removes the designated quote from the mentioned user's quote book. \n\n"
-    #instructions += prefix + "editquote @user [quote number] [new quote]: Overwrites the user's quote at [number] with [new quote]. \n\n"
 
     embed.add_field(name="Github",value="Check out our [github](https://github.com/a-outs/GunrockBot) for more info!")
     embed.set_footer(text="Contact timmie#6383 or Moragoh#7628 for help, questions, comments, or concerns.")
@@ -168,7 +156,7 @@ async def setprefix(ctx, arg):
 
 # change modules command
 @client.command(name="enable module", aliases=['mod', 'module'])
-@has_permissions(manage_guild=True)
+@has_permissions(manage_roles=True)
 async def module(ctx, arg):
     if(arg in mod_list):
         if(ctx.guild.id in modules):
@@ -186,7 +174,7 @@ async def module(ctx, arg):
 
 # list modules command
 @client.command(name="list modules", aliases=['listmods'])
-@has_permissions(manage_guild=True)
+@has_permissions(manage_roles=True)
 async def list_modules(ctx):
     mod_string = ''
     for mod in mod_list:
@@ -205,8 +193,6 @@ async def list_modules(ctx):
 # cog reload command
 @client.command(name="reloadcog", aliases=['cog', 'reload'])
 async def cog_reload(ctx, *, cog: str):
-    # Command which Reloads a Module.
-
     if(ctx.author.id in admins):
         cog = "cogs." + cog
 
@@ -214,7 +200,11 @@ async def cog_reload(ctx, *, cog: str):
             client.unload_extension(cog)
             client.load_extension(cog)
         except Exception as e:
-            await ctx.send(f'**`ERROR:`** {type(e).__name__} - {e}')
+            if(type(e).__name__ == "ExtensionNotLoaded"):
+                client.load_extension(cog)
+                await ctx.send('**`SUCCESS`** The cog ' + cog + ' was unloaded, but I loaded it for you anyway!')
+            else:
+                await ctx.send(f'**`ERROR:`** {type(e).__name__} - {e}')
         else:
             await ctx.send('**`SUCCESS`** Cog ' + cog + ' reloaded')
     else:
@@ -223,8 +213,6 @@ async def cog_reload(ctx, *, cog: str):
 # cog load command
 @client.command(name="loadcog", aliases=['load'])
 async def cog_load(ctx, *, cog: str):
-    # Command which loads a Module.
-
     if(ctx.author.id in admins):
         cog = "cogs." + cog
 
@@ -240,8 +228,6 @@ async def cog_load(ctx, *, cog: str):
 # cog unload command
 @client.command(name="unloadcog", aliases=['unload'])
 async def cog_unload(ctx, *, cog: str):
-    # Command which unloads a Module.
-
     if(ctx.author.id in admins):
         cog = "cogs." + cog
 

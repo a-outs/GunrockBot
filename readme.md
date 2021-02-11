@@ -16,9 +16,12 @@ For help
 Gives you the full course name and description, including GE's fulfilled and prerequisites.
 
 `crn [course code]`
-Gives you the CRN data of a course for the current quarter.
+Gives you the CRN data of a course.
 
 ### Meme Commands (`memes`)
+
+`cheeto`
+Sends a random picture of cheeto
 
 `boomer @user`
 Calls out a user for being a boomer
@@ -35,7 +38,7 @@ Calls them out for being bad
 `simp @user`
 Rates how much of a simp they are
 
-### Admin Only Commands (requires manage_guild permission)
+### Admin Only Commands (requires manage roles permission)
 
 `setprefix [newprefix]`
 use this to set the bot prefix
@@ -47,13 +50,15 @@ enables or disables the specified module
 lists all mods and whether or not they are enabled or disabled
 
 `timeout [timeout length]`
-Messages sent from commands in the `data` category will self desctruct after `timeout length` seconds. Input must be an integer.
+Messages sent from commands in the `data` category will self destruct after `timeout length` seconds. Input must be an integer.
 Set to 0 to disable timeout.
 
 ## CHANGELOG
 
-### GUNROCK 1.5.1
+### GUNROCK 1.5.3
 
+- Added cheeto command
+- `crn` will now give up-to-date information on seats available whenever possible.
 - Commands are now modular and can be enabled/disabled per-server.
 - Added ability to set timeout for data commands.
 
