@@ -169,10 +169,29 @@ async def module(ctx, arg):
     modloader.save_mods(modules)
     await ctx.send(embed = embed)
 
+# modules channel whitelist command
+@client.command(name="whitelist module", aliases=['modwhitelist'])
+@has_permissions(manage_roles=True)
+async def modwhitelist(ctx, *args):
+    if(args[0] in mod_list):
+        if(not ctx.guild.id in modules):
+            modules[ctx.guild.id] = {}
+        if(len(args) == 1):
+            modules[ctx.guild.id][args[0] + "_whitelist"] = 0
+            embed = discord.Embed(title="Module changed!", description="Commands for module " + args[0] + " are no longer restricted to any channel.", color=0xffbf00)
+        else: 
+            modules[ctx.guild.id][args[0] + "_whitelist"] = int(args[1])
+            embed = discord.Embed(title="Module changed!", description="Commands for module " + args[0] + " are now restricted to channel with ID of  " + args[1], color=0xffbf00)
+    else:
+        embed = discord.Embed(title="Invalid module", description=arg + " is not a valid module.", color=0xd11313)
+    modloader.save_mods(modules)
+    await ctx.send(embed = embed)
+
 # list modules command
 @client.command(name="list modules", aliases=['listmods'])
 @has_permissions(manage_roles=True)
 async def list_modules(ctx):
+    print(modules)
     mod_string = ''
     for mod in mod_list:
         mod_string += mod + " "

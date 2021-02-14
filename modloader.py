@@ -26,8 +26,17 @@ def modcheck(mod_name):
         pickle_in.close()
         if(ctx.guild.id in modules):
             if(mod_name in modules[ctx.guild.id]):
-                return modules[ctx.guild.id][mod_name]
-            else: return True
+                if mod_name + "_whitelist" in modules[ctx.guild.id]:
+                    if modules[ctx.guild.id][mod_name + "_whitelist"] == ctx.channel.id:
+                        return modules[ctx.guild.id][mod_name]
+                    else: return False
+                else: return modules[ctx.guild.id]
+            else: 
+                if mod_name + "_whitelist" in modules[ctx.guild.id]:
+                    if modules[ctx.guild.id][mod_name + "_whitelist"] == 0 or modules[ctx.guild.id][mod_name + "_whitelist"] == ctx.channel.id:
+                        return True
+                    else: return False
+                else: return True
         else: return True
     return commands.check(predicate)
 

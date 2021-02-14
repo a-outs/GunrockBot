@@ -51,6 +51,9 @@ use this to set the bot prefix
 `mod [mod name]`
 enables or disables the specified module
 
+`modwhitelist [mod name] [channel id]`
+If a channel id is provided, commands from the module specified will be restricted to the specified channel. If a channel id is not specified, commands will not be restricted.
+
 `listmods`
 lists all mods and whether or not they are enabled or disabled
 
@@ -60,12 +63,12 @@ Set to 0 to disable timeout.
 
 ## CHANGELOG
 
-### GUNROCK 1.5.4
+### GUNROCK 1.5.5
 
 - Seperated ping and meme commands
 - Added cheeto and hydrate commands
 - `crn` will now give up-to-date information on seats available whenever possible.
-- Commands are now modular and can be enabled/disabled per-server.
+- Commands are now modular and can be enabled/disabled per-server. In addition, commands in modules can be restricted to certain channels.
 - Added ability to set timeout for data commands.
 
 ### GUNROCK 1.4.1
