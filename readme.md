@@ -23,6 +23,8 @@ Gives you the CRN data of a course.
 `cheeto`
 Sends a random picture of cheeto
 
+### Ping Commands (`pings`)
+
 `boomer @user`
 Calls out a user for being a boomer
 
@@ -58,8 +60,9 @@ Set to 0 to disable timeout.
 
 ## CHANGELOG
 
-### GUNROCK 1.5.3
+### GUNROCK 1.5.4
 
+- Seperated ping and meme commands
 - Added cheeto and hydrate commands
 - `crn` will now give up-to-date information on seats available whenever possible.
 - Commands are now modular and can be enabled/disabled per-server.

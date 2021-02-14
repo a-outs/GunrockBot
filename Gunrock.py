@@ -42,6 +42,7 @@ initial_extensions = [
     # 'cogs.swearjar',
     #'cogs.quotebook',
     'cogs.memes',
+    'cogs.pings',
     'cogs.data'
     #'cogs.misc'
     #'cogs.nuke'
@@ -49,7 +50,8 @@ initial_extensions = [
 
 mod_list = [
     'memes',
-    'data'
+    'data',
+    'pings'
 ]
 
 client = commands.Bot(command_prefix = determine_prefix, description="Gunrock the Bot!")
@@ -113,23 +115,27 @@ async def help(ctx):
 
     instructions = ''
     embed = discord.Embed(title="Commands:", description=instructions, color=0xffbf00)
-
-    if(not guild or modloader.is_enabled('memes', ctx.guild.id)):
+    
+    if(not guild or modloader.is_enabled('pings', ctx.guild.id)):
         tempvalue = ''
-        tempvalue += prefix + "cheeto\nSends a random picture of cheeto\n\n"
         tempvalue += prefix + "boomer @user\nCalls out a user for being a boomer\n\n"
         tempvalue += prefix + "dab @user\nDabs on dem haters\n\n"
         tempvalue += prefix + "cow @user\nTells you how much of a true Aggie they are\n\n"
         tempvalue += prefix + "bad @user\nCalls them out for being bad\n\n"
         tempvalue += prefix + "hydrate @user\nTells them to hydrate\n\n"
         tempvalue += prefix + "simp @user\nRates how much of a simp they are"
-        embed.add_field(name="Memes:", value=tempvalue)
+        embed.add_field(name="Pings:", value=tempvalue)
 
     if(not guild or modloader.is_enabled('data', ctx.guild.id)):
         tempvalue = ''
         tempvalue += prefix + "course [course code]\nGives you the full course name and description.\n\n"
         tempvalue += prefix + "crn [course code]\nGives you the CRN data of a course."
         embed.add_field(name="Course Data:", value=tempvalue)
+
+    if(not guild or modloader.is_enabled('memes', ctx.guild.id)):
+        tempvalue = ''
+        tempvalue += prefix + "cheeto\nSends a random picture of cheeto"
+        embed.add_field(name="Memes:", value=tempvalue)
 
     embed.add_field(name="Github",value="Check out our [github](https://github.com/a-outs/GunrockBot) for more info!")
     embed.set_footer(text="Contact timmie#6383 or Moragoh#7628 for help, questions, comments, or concerns.")
