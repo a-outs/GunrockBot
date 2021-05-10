@@ -191,7 +191,6 @@ async def modwhitelist(ctx, *args):
 @client.command(name="list modules", aliases=['listmods'])
 @has_permissions(manage_roles=True)
 async def list_modules(ctx):
-    print(modules)
     mod_string = ''
     for mod in mod_list:
         mod_string += mod + " "

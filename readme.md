@@ -52,7 +52,7 @@ use this to set the bot prefix
 enables or disables the specified module
 
 `modwhitelist [mod name] [channel id]`
-If a channel id is provided, commands from the module specified will be restricted to the specified channel. If a channel id is not specified, commands will not be restricted.
+If a channel id is provided, commands from the module given will be restricted to the specified channel. If no channel id is given, commands will be unrestricted.
 
 `listmods`
 lists all mods and whether or not they are enabled or disabled
@@ -62,6 +62,10 @@ Messages sent from commands in the `data` category will self destruct after `tim
 Set to 0 to disable timeout.
 
 ## CHANGELOG
+
+### GUNROCK 1.5.6
+
+- Updated data for the 2021-2022 school year.
 
 ### GUNROCK 1.5.5
 

@@ -23,7 +23,7 @@ from modloader import modcheck
 
 mod = 'data'
 
-current_term = 202103
+current_term = 202110
 
 class DataCog(commands.Cog):
     def __init__(self, bot):
@@ -107,7 +107,7 @@ async def timeout_logic(embed, ctx, message):
         await message.edit(content="", embed = embed)
 
 def get_course_data(course_code):
-    with open("data/20202021GenCat.txt", "r", encoding='utf8') as csv_file:
+    with open("data/20212022GenCat.txt", "r", encoding='utf8') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         header = []
         for row in csv_reader:
@@ -171,6 +171,7 @@ def fetch_CRN_data(course_code):
     number = course_code.upper().split(' ')[1]
     hed = {'Authorization': 'Bearer ' + open("tokens/bearer.token", "r").read()}
     courseJson = requests.get("https://mydegree.ucdavis.edu/responsiveDashboard/api/course-link?discipline=" + discipline + "&number=" + number + "&", headers=hed).json()
+    print(courseJson)
     if("error" in courseJson): #if the api request fails, fall back to the old function and send a ping to tim to fix
         DiscordWebhook(url='https://discord.com/api/webhooks/796594761742024705/3yLjjHvru14K-ughlwjAZhE5P5vPo_leDeKIvjN9PEybFrIuXb3Vrpxcvs2mdM_LvgDL', content='<@372696487290863618> The bearer token has expired, please fix!').execute()
         return get_CRN_data(course_code, current_term)
