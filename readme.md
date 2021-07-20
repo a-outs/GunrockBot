@@ -1,3 +1,7 @@
+# DEPRECIATION WARNING
+
+GunrockBot is being replaced with [GunrockJS](https://github.com/a-outs/GunrockJS)! Everything will still be kept around just in case :)
+
 # GUNROCK BOT
 The best bot around for UC Davis Discord Servers
 
